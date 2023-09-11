@@ -27,21 +27,31 @@ export default function Auth() {
   const { sendRequest } = useHttpClient();
   const [open, setOpen] = useState(false);
   const [DA, setDA] = useState("");
+  const [nomEntreprise, setNomEntreprise] = useState("");
+  const [adresse, setAdresse] = useState("");
   let messageErreur;
 
   function noDAHandler(event) {
     setDA(event.target.value);
+  }
+  function adresseHandler(event){
+    setAdresse(event.target.value);
+  }
+  function nomEntrepriseHandler(event){
+    setNomEntreprise(event.target.value);
   }
 
   function checkboxEmployeurHandler(event) {
     if (event.target.checked) {
       auth.isEtudiant = false;
       auth.isEmployeur = true;
+      document.getElementById("inputsEmployeur").style.display = "block";
       document.getElementById("inputsEtudiant").style.display = "none";
       document.getElementById("checkboxEtudiant").checked = false;
     } else {
       auth.isEtudiant = true;
       auth.isEmployeur = false;
+      document.getElementById("inputsEmployeur").style.display = "none";
       document.getElementById("inputsEtudiant").style.display = "block";
       document.getElementById("checkboxEtudiant").checked = true;
     }
@@ -51,16 +61,18 @@ export default function Auth() {
     if (event.target.checked) {
       auth.isEtudiant = true;
       auth.isEmployeur = false;
+      
+      document.getElementById("inputsEmployeur").style.display = "none";
       document.getElementById("inputsEtudiant").style.display = "block";
       document.getElementById("checkboxEmployeur").checked = false;
     } else {
       auth.isEtudiant = false;
       auth.isEmployeur = true;
+      document.getElementById("inputsEtudiant").style.display = "block";
       document.getElementById("inputsEtudiant").style.display = "none";
       document.getElementById("checkboxEmployeur").checked = true;
     }
   }
-
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -85,7 +97,8 @@ export default function Auth() {
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
-
+      setAdresse("");
+      setNomEntreprise("");  
       setDA("");
     } else {
       setFormData(
@@ -138,7 +151,7 @@ export default function Auth() {
         auth.login(
           reponseData.utilisateur._id,
           auth.isEtudiant,
-          auth.isEmployeur,
+          auth.isEmployeur
         );
 
         navigate("/");
@@ -159,6 +172,8 @@ export default function Auth() {
               nom: formState.inputs.name.value,
               courriel: formState.inputs.email.value,
               motDePasse: formState.inputs.password.value,
+              nomEntreprise: nomEntreprise,
+              adresseEntreprise: adresse,
             }),
             {
               "Content-Type": "application/json",
@@ -168,7 +183,7 @@ export default function Auth() {
           auth.login(
             reponseData.employeur._id,
             auth.isEtudiant,
-            auth.isEmployeur,
+            auth.isEmployeur
           );
 
           navigate("/");
@@ -190,7 +205,7 @@ export default function Auth() {
           auth.login(
             reponseData.etudiant._id,
             auth.isEtudiant,
-            auth.isEmployeur,
+            auth.isEmployeur
           );
 
           navigate("/");
@@ -295,8 +310,42 @@ export default function Auth() {
                     Entrez votre numéro DA
                   </label>
                 </div>
+              </div>
+              <div id="inputsEmployeur" className="hidden">
+                <div className="relative z-0 w-full mb-6 group">
+                  <input
+                    value={nomEntreprise}
+                    type="text"
+                    className="block py-2.5 px-1 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                    id="nomEntreprise"
+                    placeholder=""
+                    onChange={nomEntrepriseHandler}
+                  />
 
-                
+                  <label
+                    htmlFor="nomEntreprise"
+                    className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  >
+                    Nom de l'entreprise
+                  </label>
+                </div>
+                <div className="relative z-0 w-full mb-6 group">
+                  <input
+                    value={adresse}
+                    type="text"
+                    className="block py-2.5 px-1 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                    id="adresse"
+                    placeholder=""
+                    onChange={adresseHandler}
+                  />
+
+                  <label
+                    htmlFor="adresse"
+                    className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  >
+                    Adresse de l'entreprise
+                  </label>
+                </div>
               </div>
             </React.Fragment>
           )}
@@ -308,10 +357,7 @@ export default function Auth() {
           ) : (
             <Button
               type="submit"
-              disabled={
-                !formState.isValid ||
-                (!formState.isValid && DA !== "")
-              }
+              disabled={!formState.isValid || (!formState.isValid && DA !== "")}
             >
               Inscription
             </Button>
@@ -342,5 +388,5 @@ export default function Auth() {
         </DialogActions>
       </Dialog>
     </div>
-    );
-  }
+  );
+}
