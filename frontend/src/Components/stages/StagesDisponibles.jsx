@@ -23,24 +23,20 @@ export default function StagesDisponibles() {
 
   const auth = useContext(AuthContext);
 
-  async function getStages(type) {
+  async function getStages() {
     try {
       const data = await axios.get("http://localhost:5000/api/stages/");
 
       const stages = data.data.stages;
 
-      if (type) {
-        setLesStages(stages.filter((stage) => stage.type === type));
-      } else {
-        setLesStages(stages);
-      }
+      setLesStages(stages);
     } catch (err) {
       console.log(err);
     }
   }
 
   useEffect(() => {
-    getStages(auth.profile);
+    getStages();
   }, []);
 
   return (

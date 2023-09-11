@@ -6,7 +6,6 @@ export const AuthContext = createContext({
   isEmployeur: false,
   isCordonnateur: false,
   isEtudiant: false,
-  profile: "",
   login: () => {},
   logout: () => {},
   modification: () => {},

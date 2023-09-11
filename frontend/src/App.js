@@ -20,13 +20,12 @@ function App() {
   const [userId, setUserId] = useState(null);
   const [isEtudiant, setIsEtudiant] = useState(false);
   const [isEmployeur, setIsEmployeur] = useState(false);
-  const [profile, setProfile] = useState("");
   const [isCordonnateur, setIsCordonnateur] = useState(false);
   const [derniereModification, setDerniereModification] = useState(
     new Date().toLocaleString()
   );
 
-  const login = useCallback((userId, isEtudiant, isEmployeur, typeProfile) => {
+  const login = useCallback((userId, isEtudiant, isEmployeur) => {
     setIsLoggedIn(true);
     setUserId(userId);
 
@@ -34,7 +33,6 @@ function App() {
       setIsEtudiant(true);
       setIsEmployeur(false);
       setIsCordonnateur(false);
-      setProfile(typeProfile);
     } else if (isEmployeur) {
       setIsCordonnateur(false);
       setIsEtudiant(false);
@@ -56,7 +54,6 @@ function App() {
     setIsEmployeur(false);
     setIsEtudiant(false);
     setIsCordonnateur(false);
-    setProfile("");
   }, []);
 
   return (
@@ -67,7 +64,6 @@ function App() {
         isEmployeur: isEmployeur,
         isEtudiant: isEtudiant,
         isCordonnateur: isCordonnateur,
-        profile: profile,
         login: login,
         logout: logout,
         modification: modification,

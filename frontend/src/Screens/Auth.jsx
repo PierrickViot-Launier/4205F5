@@ -25,7 +25,6 @@ export default function Auth() {
   const auth = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
   const { sendRequest } = useHttpClient();
-  const [profil, setProfil] = useState("");
   const [open, setOpen] = useState(false);
   let messageErreur;
 
@@ -39,10 +38,6 @@ export default function Auth() {
       auth.isEmployeur = true;
       document.getElementById("inputsEtudiant").style.display = "none";
     }
-  }
-
-  function profilHandler(event) {
-    setProfil(event.target.value);
   }
 
   const [formState, inputHandler, setFormData] = useForm(
@@ -101,7 +96,6 @@ export default function Auth() {
         switch (reponseData.typeUtilisateur) {
           case "etudiant":
             auth.isEtudiant = true;
-            auth.profile = reponseData.utilisateur.profil;
             break;
           case "employeur":
             auth.isEmployeur = true;
@@ -117,8 +111,7 @@ export default function Auth() {
         auth.login(
           reponseData.utilisateur._id,
           auth.isEtudiant,
-          auth.isEmployeur,
-          auth.profile
+          auth.isEmployeur
         );
 
         navigate("/");
@@ -147,7 +140,7 @@ export default function Auth() {
             }
           );
           console.log(reponseData);
-          auth.login(reponseData.employeur.id, auth.isEtudiant, profil);
+          auth.login(reponseData.employeur.id, auth.isEtudiant, auth.isEmployeur);
           navigate("/");
         } else {
           const reponseData = await sendRequest(
@@ -158,14 +151,13 @@ export default function Auth() {
               nom: formState.inputs.name.value,
               courriel: formState.inputs.email.value,
               motDePasse: formState.inputs.password.value,
-              profil: profil,
             }),
             {
               "Content-Type": "application/json",
             }
           );
           console.log(reponseData);
-          auth.login(reponseData.etudiant.id, auth.isEtudiant, profil);
+          auth.login(reponseData.etudiant._id, auth.isEtudiant, auth.isEmployeur);
           navigate("/");
         }
       } catch (err) {
@@ -242,22 +234,6 @@ export default function Auth() {
                   errorText="Veuillez entrer votre numéro DA."
                   onInput={inputHandler}
                 />
-
-                <select
-                  value={profil}
-                  className="mb-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 "
-                  name="profils"
-                  id="profils"
-                  onChange={profilHandler}
-                >
-                  <option value="">Sélectionnez un profil</option>
-                  <option value="Réseaux et sécurité">
-                    Réseaux et sécurité
-                  </option>
-                  <option value="Développement d'applications">
-                    Développement d'applications
-                  </option>
-                </select>
               </div>
             </React.Fragment>
           )}
@@ -268,7 +244,7 @@ export default function Auth() {
           ) : (
             <Button
               type="submit"
-              disabled={!formState.isValid || profil === ""}
+              disabled={!formState.isValid}
             >
               Inscription
             </Button>
