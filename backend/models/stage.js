@@ -8,7 +8,6 @@ const stageSchema = new Schema({
   numeroContact: { type: String, required: true },
   nomEntreprise: { type: String, required: true },
   adresseEntreprise: { type: String, required: true },
-  type: { type: String, required: true },
   nbPoste: { type: String, required: true },
   description: { type: String, required: true },
   remuneration: { type: String, required: true },
