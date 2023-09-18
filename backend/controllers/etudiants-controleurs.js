@@ -45,28 +45,40 @@ const inscription = async (requete, reponse, next) => {
 
 const modificationProfil = async (requete, reponse, next) => {
   const etudiantId = requete.params.etudiantId;
+  const etudiantPassword = requete.params.etudiantPassword;
   const { DA, nom, courriel, motDePasse, telephone, addresseComplete } = requete.body;
 
+  let etudiant = null;
+
   try {
-    const etudiant = await Etudiant.findById(etudiantId);
+    etudiant = await Etudiant.findById(etudiantId);
+  }
+  catch (err) {
+    return next(new HttpErreur("Erreur lors de la récupération de l'édutiant", 500, err.message));
+  }
+    //make sure que le password fourni dans les params (url) est correcte, sinon on refuse la modification
+  if (etudiant.motDePasse !== etudiantPassword) {
+    throw new HttpErreur("Peut pas modifier le profil de l'utilisateur parce que le mot de passe fourni est incorrecte", 401);
+  }
+
+  try {
     etudiant.DA = DA;
     etudiant.nom = nom;
     etudiant.courriel = courriel;
     etudiant.motDePasse = motDePasse;
     etudiant.telephone = telephone;
     etudiant.addresseComplete = addresseComplete;
-
     await etudiant.save();
-
-    reponse
-    .status(200)
-    .json({
-
-    });
   }
   catch (err) {
-    return next(new HttpErreur("Erreur lors de la récupération de l'édutiant", 500, err.message));
+    throw new HttpErreur("Erreur pendant la sauvegarde des modifications de l'étudiant", 500, err.message);
   }
+  
+  reponse
+  .status(200)
+  .json({
+
+  });
 };
 
 const getEtudiants = async (requete, reponse, next) => {
