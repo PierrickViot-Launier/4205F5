@@ -41,6 +41,9 @@ const inscription = async (requete, reponse, next) => {
     .status(201)
     .json({ employeur: nouvelEmployeur.toObject({ getter: true }) });
 };
+
+
+
 const getStagesByUserId = async (requete, reponse, next) => {
   const userId = requete.params.userId;
   let employeur;
