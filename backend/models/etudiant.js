@@ -7,6 +7,8 @@ const etudiantSchema = new Schema({
   nom: { type: String, required: true },
   courriel: { type: String, required: true },
   motDePasse: { type: String, required: true },
+  telephone: { type: String, required: true },
+  addresseComplete: { type: String, required: true },
   stagesPostule: [{ type: mongoose.Types.ObjectId, ref: "Stage" }],
   stage: { type: mongoose.Types.ObjectId, ref: "Stage" },
 });

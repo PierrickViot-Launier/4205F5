@@ -5,7 +5,7 @@ const Etudiant = require("../models/etudiant");
 const Stage = require("../models/stage");
 
 const inscription = async (requete, reponse, next) => {
-  const { DA, nom, courriel, motDePasse} = requete.body;
+  const { DA, nom, courriel, motDePasse, telephone, addresseComplete } = requete.body;
 
   let etudiantExiste;
 
@@ -26,6 +26,8 @@ const inscription = async (requete, reponse, next) => {
     nom,
     courriel,
     motDePasse,
+    telephone,
+    addresseComplete,
     stagesPostule: [],
     stage: null,
   });
@@ -98,7 +100,7 @@ const postulationStage = async (requete, reponse, next) => {
     return next(new HttpErreur("Erreur lors de la récupération du stage", 500));
   }
 
-  console.log(etudiant);
+  // console.log(etudiant);
   for (i = 0; i < etudiant.stagesPostule.length; i++) {
     if (etudiant.stagesPostule[i]._id == stageId) {
       dejaPostule = true;
@@ -142,7 +144,7 @@ const getStagesByUserId = async (requete, reponse, next) => {
 
   // console.log(etudiant);
 
-  console.log(stages);
+  // console.log(stages);
 
   if (!stages || stages.length === 0) {
     return next(

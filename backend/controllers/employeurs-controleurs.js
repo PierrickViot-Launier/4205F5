@@ -4,7 +4,7 @@ const HttpErreur = require("../models/http-erreur");
 const Employeur = require("../models/employeur");
 
 const inscription = async (requete, reponse, next) => {
-  const { nom, courriel, motDePasse } = requete.body;
+  const { nom, courriel, motDePasse, nomEntreprise, addresseComplete, telephone, poste } = requete.body;
 
   let employeurExiste;
 
@@ -24,6 +24,10 @@ const inscription = async (requete, reponse, next) => {
     nom,
     courriel,
     motDePasse,
+    nomEntreprise,
+    addresseComplete,
+    telephone,
+    poste,
     stages: [],
   });
 

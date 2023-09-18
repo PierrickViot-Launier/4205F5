@@ -5,11 +5,14 @@ const Stage = require("../models/stage");
 const Coordonnateur = require("../models/cordonnateur");
 
 const creation = async (requete, reponse, next) => {
-  const { courriel, motDePasse } = requete.body;
+  const { courriel, motDePasse, nomInstitution, telephone, remarque } = requete.body;
 
   let nouveauCordonnateur = new Coordonnateur({
     courriel,
     motDePasse,
+    nomInstitution,
+    telephone,
+    remarque
   });
 
   try {
