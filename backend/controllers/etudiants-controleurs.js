@@ -43,6 +43,32 @@ const inscription = async (requete, reponse, next) => {
     .json({ etudiant: nouvelEtudiant.toObject({ getter: true }) });
 };
 
+const modificationProfil = async (requete, reponse, next) => {
+  const etudiantId = requete.params.etudiantId;
+  const { DA, nom, courriel, motDePasse, telephone, addresseComplete } = requete.body;
+
+  try {
+    const etudiant = await Etudiant.findById(etudiantId);
+    etudiant.DA = DA;
+    etudiant.nom = nom;
+    etudiant.courriel = courriel;
+    etudiant.motDePasse = motDePasse;
+    etudiant.telephone = telephone;
+    etudiant.addresseComplete = addresseComplete;
+
+    await etudiant.save();
+
+    reponse
+    .status(200)
+    .json({
+
+    });
+  }
+  catch (err) {
+    return next(new HttpErreur("Erreur lors de la récupération de l'édutiant", 500, err.message));
+  }
+};
+
 const getEtudiants = async (requete, reponse, next) => {
   let etudiants;
   try {
@@ -193,9 +219,12 @@ const assignerStage = async (requete, reponse, next) => {
   reponse.json({ etudiant: etudiant.toObject({ getter: true }) });
 };
 
-exports.assignerStage = assignerStage;
-exports.getStagesByUserId = getStagesByUserId;
-exports.getEtudiantById = getEtudiantById;
-exports.getEtudiants = getEtudiants;
-exports.inscription = inscription;
-exports.postulationStage = postulationStage;
+module.exports = {
+  assignerStage,
+  getStagesByUserId,
+  getEtudiantById,
+  getEtudiants,
+  inscription,
+  modificationProfil,
+  postulationStage,
+};

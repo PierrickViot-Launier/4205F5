@@ -10,4 +10,5 @@ router.patch("/:etudiantId", controleursEtudiants.assignerStage);
 router.get("/", controleursEtudiants.getEtudiants);
 router.get("/:etudiantId/stages", controleursEtudiants.getStagesByUserId);
 router.get("/:etudiantId", controleursEtudiants.getEtudiantById);
+router.post("/:etudiantId/modifierProfil", controleursEtudiants.modificationProfil);
 module.exports = router;
