@@ -3,8 +3,25 @@ const HttpErreur = require("../models/http-erreur");
 
 const Employeur = require("../models/employeur");
 
+
+const getEmployeurById = async (requete , reponse, next) => {
+  const userId = requete.params.userId
+  let employeur;
+  try {
+    employeur = await Employeur.findById(userId);
+  } catch (erreur) {
+    return next(
+      new HttpErreur("Erreur lors de la récupération de l'employeur", 500)
+    );
+  }
+  reponse.json({
+    employeur: employeur.toObject({ getters: true }),
+  });
+}
+
 const inscription = async (requete, reponse, next) => {
-  const { nom, courriel, motDePasse, nomEntreprise, addresseComplete, telephone, poste } = requete.body;
+  const { nom, courriel, motDePasse, nomEntreprise, adresse, telephone, poste } = requete.body;
+
 
   let employeurExiste;
 
@@ -25,9 +42,9 @@ const inscription = async (requete, reponse, next) => {
     courriel,
     motDePasse,
     nomEntreprise,
-    addresseComplete,
     telephone,
     poste,
+    adresse,
     stages: [],
   });
 
@@ -71,3 +88,4 @@ const getStagesByUserId = async (requete, reponse, next) => {
 
 exports.getStagesByUserId = getStagesByUserId;
 exports.inscription = inscription;
+exports.getEmployeurById = getEmployeurById;

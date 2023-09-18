@@ -28,22 +28,27 @@ export default function Auth() {
   const [open, setOpen] = useState(false);
   const [DA, setDA] = useState("");
   const [nomEntreprise, setNomEntreprise] = useState("");
-  const [addresseComplete, setAddresseComplete] = useState("");
   const [telephone, setTelephone] = useState("");
   const [poste, setPoste] = useState("");
-
+  const [adresse, setAdresse] = useState("");
   let messageErreur;
 
   function noDAHandler(event) {
     setDA(event.target.value);
   }
+  function adresseHandler(event){
+    setAdresse(event.target.value);
+  }
+  function nomEntrepriseHandler(event){
+    setNomEntreprise(event.target.value);
+  }
 
   function nomEntrepriseHandler(event) {
     setNomEntreprise(event.target.value);
   }
-  function addresseCompleteHandler(event) {
-    setAddresseComplete(event.target.value);
-  }
+  // function adresseEntrepriseHandler(event) {
+  //   setAdresse(event.target.value);
+  // }
   function telephoneHandler(event) {
     setTelephone(event.target.value);
   }
@@ -86,7 +91,6 @@ export default function Auth() {
     setEtudiantUserType();
   }
 
-
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
@@ -110,7 +114,8 @@ export default function Auth() {
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
-
+      setAdresse("");
+      setNomEntreprise("");  
       setDA("");
     } else {
       setFormData(
@@ -163,7 +168,7 @@ export default function Auth() {
         auth.login(
           reponseData.utilisateur._id,
           auth.isEtudiant,
-          auth.isEmployeur,
+          auth.isEmployeur
         );
 
         navigate("/");
@@ -185,9 +190,9 @@ export default function Auth() {
               courriel: formState.inputs.email.value,
               motDePasse: formState.inputs.password.value,
               nomEntreprise,
-              addresseComplete,
               telephone,
-              poste
+              poste,
+              adresse
             }),
             {
               "Content-Type": "application/json",
@@ -197,7 +202,7 @@ export default function Auth() {
           auth.login(
             reponseData.employeur._id,
             auth.isEtudiant,
-            auth.isEmployeur,
+            auth.isEmployeur
           );
 
           navigate("/");
@@ -211,7 +216,7 @@ export default function Auth() {
               nom: formState.inputs.name.value,
               courriel: formState.inputs.email.value,
               motDePasse: formState.inputs.password.value,
-              addresseComplete,
+              adresse,
               telephone
             }),
             {
@@ -222,7 +227,7 @@ export default function Auth() {
           auth.login(
             reponseData.etudiant._id,
             auth.isEtudiant,
-            auth.isEmployeur,
+            auth.isEmployeur
           );
 
           navigate("/");
@@ -330,12 +335,12 @@ export default function Auth() {
 
                 <div className="relative z-0 w-full mb-6 group">
                   <input
-                    value={addresseComplete}
+                    value={adresse}
                     type="text"
                     className="block py-2.5 px-1 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                     id="addresseComplete"
                     placeholder=""
-                    onChange={addresseCompleteHandler}
+                    onChange={adresseHandler}
                   />
 
                   <label
@@ -345,6 +350,17 @@ export default function Auth() {
                     Entrez votre addresse
                   </label>
                 </div>
+              </div>
+              <div id="inputsEmployeur" className="hidden">
+                <div className="relative z-0 w-full mb-6 group">
+                  <input
+                    value={nomEntreprise}
+                    type="text"
+                    className="block py-2.5 px-1 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                    id="nomEntreprise"
+                    placeholder=""
+                    onChange={nomEntrepriseHandler}
+                  />
 
                 <div className="relative z-0 w-full mb-6 group">
                   <input
@@ -365,9 +381,9 @@ export default function Auth() {
                 </div>
 
             
-              </div>
+              {/* </div> */}
 
-              <div id="inputsEmployeur" className="hidden">
+              {/* <div id="inputsEmployeur" className="hidden"> */}
                 <div className="relative z-0 w-full mb-6 group">
                   <input
                     value={nomEntreprise}
@@ -387,12 +403,12 @@ export default function Auth() {
 
                 <div className="relative z-0 w-full mb-6 group">
                   <input
-                    value={addresseComplete}
+                    value={adresse}
                     type="text"
                     className="block py-2.5 px-1 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                     id="addresseComplete"
                     placeholder=""
-                    onChange={addresseCompleteHandler}
+                    onChange={adresseHandler}
                   />
 
                   <label
@@ -439,6 +455,7 @@ export default function Auth() {
                   </label>
                 </div>
               </div>
+            </div>
             </React.Fragment>
           )}
 
@@ -449,10 +466,7 @@ export default function Auth() {
           ) : (
             <Button
               type="submit"
-              disabled={
-                !formState.isValid ||
-                (!formState.isValid && DA !== "")
-              }
+              disabled={!formState.isValid || (!formState.isValid && DA !== "")}
             >
               Inscription
             </Button>
@@ -483,5 +497,5 @@ export default function Auth() {
         </DialogActions>
       </Dialog>
     </div>
-    );
-  }
+  );
+}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useContext } from "react";
 import { AuthContext } from "../../shared/context/auth-context";
 import axios from "axios";
@@ -16,12 +16,30 @@ export default function NouveauStage() {
   const [telephone, setTelephone] = useState("");
   const [nomEntreprise, setNomEntreprise] = useState("");
   const [adresse, setAdresse] = useState("");
-  const [typeStage, setTypeStage] = useState("");
   const [nbPoste, setNbPoste] = useState("");
   const [description, setDescription] = useState("");
   const [remuneration, setRemuneration] = useState("");
   const [open, setOpen] = useState(false);
   const [openError, setOpenError] = useState(false);
+
+  async function getEmployeur() {
+    try {
+      const data = await axios.get("http://localhost:5000/api/employeurs/" + auth.userId);
+
+      const employeur = data.data.employeur;
+      console.log(employeur)
+      console.log(auth.userId)
+      setNomEntreprise(employeur.nomEntreprise);
+      setAdresse(employeur.adresseEntreprise);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  useEffect(() => {
+    getEmployeur();
+  }, []);
+
   function personneHandler(event) {
     setPersonneContact(event.target.value);
   }
@@ -40,10 +58,6 @@ export default function NouveauStage() {
 
   function adresseHandler(event) {
     setAdresse(event.target.value);
-  }
-
-  function stageHandler(event) {
-    setTypeStage(event.target.value);
   }
 
   function posteHandler(event) {
@@ -67,7 +81,6 @@ export default function NouveauStage() {
       numeroContact: telephone,
       nomEntreprise,
       adresseEntreprise: adresse,
-      type: typeStage,
       nbPoste,
       description,
       remuneration,
@@ -81,7 +94,6 @@ export default function NouveauStage() {
       setTelephone("");
       setNomEntreprise("");
       setAdresse("");
-      setTypeStage("");
       setNbPoste("");
       setDescription("");
       setRemuneration("");
@@ -148,6 +160,7 @@ export default function NouveauStage() {
         <div className="relative z-0 w-full mb-6 group">
           <input
             value={nomEntreprise}
+            defaultValue={nomEntreprise}
             type="text"
             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             id="nomEntreprise"
@@ -164,6 +177,7 @@ export default function NouveauStage() {
         <div className="relative z-0 w-full mb-6 group">
           <input
             value={adresse}
+            defaultValue={adresse}
             type="text"
             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             id="adresse"
@@ -177,20 +191,7 @@ export default function NouveauStage() {
             Adresse de l'entreprise
           </label>
         </div>
-        <div className="relative z-0 w-full mb-6 group">
-          <select
-            value={typeStage}
-            id="typeStage"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            onChange={stageHandler}
-          >
-            <option value="">Type de stage</option>
-            <option value="Réseaux et sécurité">Réseaux et sécurité</option>
-            <option value="Développement d'applications">
-              Développement d'applications
-            </option>
-          </select>
-        </div>
+        
         <div className="relative z-0 w-full mb-6 group">
           <input
             value={nbPoste}
