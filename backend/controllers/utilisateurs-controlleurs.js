@@ -11,27 +11,27 @@ const connexion = async (requete, reponse, next) => {
   try {
     utilisateurExiste = await Etudiant.findOne({ courriel: courriel });
     typeUtilisateur = "etudiant"
-  } catch {
+  } catch (err) {
     return next(
-      new HttpErreur("Connexion échouée, veuillez réessayer plus tard", 500)
+      new HttpErreur("Connexion échouée, veuillez réessayer plus tard", 500, err.message)
     );
   }
   if (!utilisateurExiste) {
     try {
       utilisateurExiste = await Employeur.findOne({ courriel: courriel });
       typeUtilisateur = "employeur"
-    } catch {
+    } catch (err) {
       return next(
-        new HttpErreur("Connexion échouée, veuillez réessayer plus tard", 500)
+        new HttpErreur("Connexion échouée, veuillez réessayer plus tard", 500, err.message)
       );
     }
     if (!utilisateurExiste) {
       try {
         utilisateurExiste = await Cordonnateur.findOne({ courriel: courriel });
         typeUtilisateur = "cordonnateur"
-      } catch {
+      } catch (err) {
         return next(
-          new HttpErreur("Connexion échouée, veuillez réessayer plus tard", 500)
+          new HttpErreur("Connexion échouée, veuillez réessayer plus tard", 500, err.message)
         );
       }
     

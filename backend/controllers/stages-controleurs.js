@@ -36,17 +36,17 @@ const creation = async (requete, reponse, next) => {
   let unEmployeur;
   try {
     unEmployeur = await Employeur.findById(employeur).populate("stages");
-  } catch {
+  } catch (err) {
     return next(
-      new HttpErreur("Erreur lors de la récupération de l'employeur", 500)
+      new HttpErreur("Erreur lors de la récupération de l'employeur", 500, err.message)
     );
   }
   try {
     await nouveauStage.save();
     unEmployeur.stages.push(nouveauStage);
     await unEmployeur.save();
-  } catch {
-    return next(new HttpErreur("Erreur lors de l'ajout du stage", 422));
+  } catch (err) {
+    return next(new HttpErreur("Erreur lors de l'ajout du stage", 422, err.message));
   }
 
   reponse.status(201).json({ stage: nouveauStage.toObject({ getter: true }) });
@@ -57,8 +57,8 @@ const getStageById = async (requete, reponse, next) => {
   let stage;
   try {
     stage = await Stage.findById(stageId);
-  } catch (erreur) {
-    return next(new HttpErreur("Erreur lors de la récupération du stage", 500));
+  } catch (err) {
+    return next(new HttpErreur("Erreur lors de la récupération du stage", 500, err.message));
   }
   if (!stage) {
     return next(new HttpErreur("Aucun stage trouvé pour l'id fourni", 404));
@@ -71,9 +71,9 @@ const getStages = async (requete, reponse, next) => {
 
   try {
     stages = await Stage.find();
-  } catch (erreur) {
+  } catch (err) {
     return next(
-      new HttpErreur("Erreur lors de la récupération des stages", 500)
+      new HttpErreur("Erreur lors de la récupération des stages", 500, err.message)
     );
   }
 
@@ -91,8 +91,8 @@ const supprimerStage = async (requete, reponse, next) => {
   let etudiants;
   try {
     stage = await Stage.findById(stageId).populate("etudiants employeur");
-  } catch {
-    return next(new HttpErreur("Erreur lors de la suppression du stage", 500));
+  } catch (err) {
+    return next(new HttpErreur("Erreur lors de la suppression du stage", 500, err.message));
   }
   if (!stage) {
     return next(new HttpErreur("Impossible de trouver le stage", 404));
@@ -113,7 +113,7 @@ const supprimerStage = async (requete, reponse, next) => {
 
     await employeur.save();
   } catch (err) {
-    return next(new HttpErreur("Erreur lors de la suppression du stage", 500));
+    return next(new HttpErreur("Erreur lors de la suppression du stage", 500, err.message));
   }
   reponse.status(200).json({ message: "Stage supprimé" });
 };
@@ -130,8 +130,8 @@ const modifierStage = async (requete, reponse, next) => {
 
     stage.remuneration = remuneration ? remuneration : stage.remuneration;
     await stage.save();
-  } catch {
-    return next(new HttpErreur("Erreur lors de la mise à jour du stage", 500));
+  } catch (err) {
+    return next(new HttpErreur("Erreur lors de la mise à jour du stage", 500, err.message));
   }
 
   reponse.status(200).json({ stage: stage.toObject({ getters: true }) });

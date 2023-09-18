@@ -11,8 +11,8 @@ const inscription = async (requete, reponse, next) => {
 
   try {
     etudiantExiste = await Etudiant.findOne({ DA: DA });
-  } catch {
-    return next(new HttpErreur("Échec vérification étudiant existe", 500));
+  } catch (err) {
+    return next(new HttpErreur("Échec vérification étudiant existe", 500, err.message));
   }
 
   if (etudiantExiste) {
@@ -34,8 +34,8 @@ const inscription = async (requete, reponse, next) => {
 
   try {
     await nouvelEtudiant.save();
-  } catch {
-    return next(new HttpErreur("Erreur lors de l'ajout de l'étudiant", 422));
+  } catch (err) {
+    return next(new HttpErreur("Erreur lors de l'ajout de l'étudiant", 422, err.message));
   }
 
   reponse
@@ -47,9 +47,9 @@ const getEtudiants = async (requete, reponse, next) => {
   let etudiants;
   try {
     etudiants = await Etudiant.find().populate("stagesPostule stage");
-  } catch (erreur) {
+  } catch (err) {
     return next(
-      new HttpErreur("Erreur lors de la récupération des étudiants", 500)
+      new HttpErreur("Erreur lors de la récupération des étudiants", 500, err.message)
     );
   }
   if (!etudiants) {
@@ -65,9 +65,9 @@ const getEtudiantById = async (requete, reponse, next) => {
 
   try {
     etudiant = await Etudiant.findById(etudiantId);
-  } catch (erreur) {
+  } catch (err) {
     return next(
-      new HttpErreur("Erreur lors de la récupération de l'étudiant", 500)
+      new HttpErreur("Erreur lors de la récupération de l'étudiant", 500, err.message)
     );
   }
 
@@ -88,16 +88,16 @@ const postulationStage = async (requete, reponse, next) => {
 
   try {
     etudiant = await Etudiant.findById(etudiantId);
-  } catch (erreur) {
+  } catch (err) {
     return next(
-      new HttpErreur("Erreur lors de la récupération de l'étudiant", 500)
+      new HttpErreur("Erreur lors de la récupération de l'étudiant", 500, err.message)
     );
   }
 
   try {
     stage = await Stage.findById(stageId);
-  } catch (erreur) {
-    return next(new HttpErreur("Erreur lors de la récupération du stage", 500));
+  } catch (err) {
+    return next(new HttpErreur("Erreur lors de la récupération du stage", 500, err.message));
   }
 
   // console.log(etudiant);
@@ -119,8 +119,8 @@ const postulationStage = async (requete, reponse, next) => {
     stage.etudiants.push(etudiant);
 
     await stage.save();
-  } catch {
-    return next(new HttpErreur("Erreur lors de l'inscription au stage", 500));
+  } catch (err) {
+    return next(new HttpErreur("Erreur lors de l'inscription au stage", 500, err.message));
   }
 
   reponse.json({ message: "Étudiant inscrit avec succès" });
@@ -136,9 +136,9 @@ const getStagesByUserId = async (requete, reponse, next) => {
     etudiant = await Etudiant.findById(etudiantId).populate("stagesPostule");
 
     stages = etudiant.stagesPostule;
-  } catch (erreur) {
+  } catch (err) {
     return next(
-      new HttpErreur("Erreur lors de la récupération des stages", 500)
+      new HttpErreur("Erreur lors de la récupération des stages", 500, err.message)
     );
   }
 
@@ -162,14 +162,14 @@ const assignerStage = async (requete, reponse, next) => {
   let stage;
   try {
     stage = await Stage.findById(stageId).populate("etudiants");
-  } catch (erreur) {
-    return next(new HttpErreur("Erreur lors de la récupération du stage", 500));
+  } catch (err) {
+    return next(new HttpErreur("Erreur lors de la récupération du stage", 500, err.message));
   }
   try {
     etudiant = await Etudiant.findById(etudiantId).populate("stage");
-  } catch (erreur) {
+  } catch (err) {
     return next(
-      new HttpErreur("Erreur lors de la récupération de l'étudiant", 500)
+      new HttpErreur("Erreur lors de la récupération de l'étudiant", 500, err.message)
     );
   }
 
@@ -188,7 +188,7 @@ const assignerStage = async (requete, reponse, next) => {
     etudiant.stage = stage;
     await etudiant.save();
   } catch (err) {
-    return next(new HttpErreur("Erreur lors de l'assignation au stage", 500));
+    return next(new HttpErreur("Erreur lors de l'assignation au stage", 500, err.message));
   }
   reponse.json({ etudiant: etudiant.toObject({ getter: true }) });
 };

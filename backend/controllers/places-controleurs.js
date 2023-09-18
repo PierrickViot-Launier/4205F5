@@ -14,7 +14,7 @@ const getPlaceById = async (requete, reponse, next) => {
     place = await Place.findById(placeId);
   } catch (err) {
     return next(
-      new HttpErreur("Erreur lors de la récupération de la place", 500)
+      new HttpErreur("Erreur lors de la récupération de la place", 500, err.message)
     );
   }
   if (!place) {
@@ -38,7 +38,8 @@ const getPlacesByUserId = async (requete, reponse, next) => {
     return next(
       new HttpErreur(
         "Erreur lors de la récupération des places de l'utilisateur",
-        500
+        500,
+        err.message
       )
     );
   }
@@ -70,9 +71,9 @@ const creerPlace = async (requete, reponse, next) => {
   try {
     utilisateur = await Utilisateur.findById(createur);
     
-  } catch {
+  } catch (err) {
     
-    return next(new HttpErreur("Création de place échouée", 500));
+    return next(new HttpErreur("Création de place échouée", 500, err.message));
   }
 
   if (!utilisateur) {
@@ -89,7 +90,7 @@ const creerPlace = async (requete, reponse, next) => {
     //Une transaction ne crée pas automatiquement de collection dans mongodb, même si on a un modèle
     //Il faut la créer manuellement dans Atlas ou Compass
   } catch (err) {
-    const erreur = new HttpErreur("Création de place échouée", 500);
+    const erreur = new HttpErreur("Création de place échouée", 500, err.message);
     return next(erreur);
   }
   reponse.status(201).json({ place: nouvellePlace });
@@ -106,9 +107,9 @@ const updatePlace = async (requete, reponse, next) => {
     place.titre = titre;
     place.description = description;
     await place.save();
-  } catch {
+  } catch (err) {
     return next(
-      new HttpErreur("Erreur lors de la mise à jour de la place", 500)
+      new HttpErreur("Erreur lors de la mise à jour de la place", 500, err.message)
     );
   }
 
@@ -120,9 +121,9 @@ const supprimerPlace = async (requete, reponse, next) => {
   let place;
   try {
     place = await Place.findById(placeId).populate("createur");
-  } catch {
+  } catch (err) {
     return next(
-      new HttpErreur("Erreur lors de la suppression de la place", 500)
+      new HttpErreur("Erreur lors de la suppression de la place", 500, err.message)
     );
   }
   if(!place){
@@ -136,9 +137,9 @@ const supprimerPlace = async (requete, reponse, next) => {
     place.createur.places.pull(place);
     await place.createur.save()
 
-  }catch{
+  } catch (err) {
     return next(
-      new HttpErreur("Erreur lors de la suppression de la place", 500)
+      new HttpErreur("Erreur lors de la suppression de la place", 500, err.message)
     );
   }
   reponse.status(200).json({ message: "Place supprimée" });

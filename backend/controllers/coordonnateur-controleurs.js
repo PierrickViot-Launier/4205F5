@@ -17,9 +17,9 @@ const creation = async (requete, reponse, next) => {
 
   try {
     await nouveauCordonnateur.save();
-  } catch {
+  } catch (err) {
     return next(
-      new HttpErreur("Erreur lors de la création du cordonnateur", 500)
+      new HttpErreur("Erreur lors de la création du cordonnateur", 500, err.message)
     );
   }
 

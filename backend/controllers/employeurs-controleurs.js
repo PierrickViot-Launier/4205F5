@@ -10,8 +10,8 @@ const inscription = async (requete, reponse, next) => {
 
   try {
     employeurExiste = await Employeur.findOne({ courriel: courriel });
-  } catch {
-    return next(new HttpErreur("Échec vérification si employeur existe", 500));
+  } catch (err) {
+    return next(new HttpErreur("Échec vérification si employeur existe", 500, err.message));
   }
 
   if (employeurExiste) {
@@ -33,8 +33,8 @@ const inscription = async (requete, reponse, next) => {
 
   try {
     await nouvelEmployeur.save();
-  } catch {
-    return next(new HttpErreur("Erreur lors de l'ajout de l'employeur", 422));
+  } catch (err) {
+    return next(new HttpErreur("Erreur lors de l'ajout de l'employeur", 422, err.message));
   }
 
   reponse
@@ -49,9 +49,9 @@ const getStagesByUserId = async (requete, reponse, next) => {
   try {
     employeur = await Employeur.findById(userId).populate("stages");
     stages = employeur.stages;
-  } catch (erreur) {
+  } catch (err) {
     return next(
-      new HttpErreur("Erreur lors de la récupération des stages", 500)
+      new HttpErreur("Erreur lors de la récupération des stages", 500, err.message)
     );
   }
 
