@@ -27,38 +27,63 @@ export default function Auth() {
   const { sendRequest } = useHttpClient();
   const [open, setOpen] = useState(false);
   const [DA, setDA] = useState("");
+  const [nomEntreprise, setNomEntreprise] = useState("");
+  const [addresseComplete, setAddresseComplete] = useState("");
+  const [telephone, setTelephone] = useState("");
+  const [poste, setPoste] = useState("");
+
   let messageErreur;
 
   function noDAHandler(event) {
     setDA(event.target.value);
   }
 
-  function checkboxEmployeurHandler(event) {
-    if (event.target.checked) {
-      auth.isEtudiant = false;
-      auth.isEmployeur = true;
-      document.getElementById("inputsEtudiant").style.display = "none";
-      document.getElementById("checkboxEtudiant").checked = false;
-    } else {
+  function nomEntrepriseHandler(event) {
+    setNomEntreprise(event.target.value);
+  }
+  function addresseCompleteHandler(event) {
+    setAddresseComplete(event.target.value);
+  }
+  function telephoneHandler(event) {
+    setTelephone(event.target.value);
+  }
+  function posteHandler(event) {
+    setPoste(event.target.value);
+  }
+
+
+
+
+  //pour l'inscription, fonctions utilitaires pour gérer quel section d'interface graphique est visible (on affiche les inputs pour un employeur?, un étudiant?, etc).
+  //il faudrait refactoriser le code
+  function clearUserTypeDependentInputs() {
+    auth.isEtudiant = false;
+    auth.isEmployeur = false;
+    document.getElementById("inputsEtudiant").style.display = "none";
+    document.getElementById("inputsEmployeur").style.display = "none";
+    document.getElementById("checkboxEtudiant").checked = false;
+    document.getElementById("checkboxEmployeur").checked = false;
+  }
+  function setEmployeurUserType() {
+    auth.isEmployeur = true;
+    document.getElementById("inputsEmployeur").style.display = "block";
+    document.getElementById("checkboxEmployeur").checked = true;
+  }
+  function setEtudiantUserType() {
       auth.isEtudiant = true;
-      auth.isEmployeur = false;
       document.getElementById("inputsEtudiant").style.display = "block";
       document.getElementById("checkboxEtudiant").checked = true;
-    }
+  }
+
+
+  function checkboxEmployeurHandler(event) {
+    clearUserTypeDependentInputs();
+    setEmployeurUserType();
   }
 
   function checkboxEtudiantHandler(event) {
-    if (event.target.checked) {
-      auth.isEtudiant = true;
-      auth.isEmployeur = false;
-      document.getElementById("inputsEtudiant").style.display = "block";
-      document.getElementById("checkboxEmployeur").checked = false;
-    } else {
-      auth.isEtudiant = false;
-      auth.isEmployeur = true;
-      document.getElementById("inputsEtudiant").style.display = "none";
-      document.getElementById("checkboxEmployeur").checked = true;
-    }
+    clearUserTypeDependentInputs();
+    setEtudiantUserType();
   }
 
 
@@ -159,6 +184,10 @@ export default function Auth() {
               nom: formState.inputs.name.value,
               courriel: formState.inputs.email.value,
               motDePasse: formState.inputs.password.value,
+              nomEntreprise,
+              addresseComplete,
+              telephone,
+              poste
             }),
             {
               "Content-Type": "application/json",
@@ -172,7 +201,8 @@ export default function Auth() {
           );
 
           navigate("/");
-        } else {
+        }
+        else if (auth.isEtudiant) {
           const reponseData = await sendRequest(
             "http://localhost:5000/api/etudiants/inscription",
             "POST",
@@ -181,6 +211,8 @@ export default function Auth() {
               nom: formState.inputs.name.value,
               courriel: formState.inputs.email.value,
               motDePasse: formState.inputs.password.value,
+              addresseComplete,
+              telephone
             }),
             {
               "Content-Type": "application/json",
@@ -294,9 +326,118 @@ export default function Auth() {
                   >
                     Entrez votre numéro DA
                   </label>
+                </div>    
+
+                <div className="relative z-0 w-full mb-6 group">
+                  <input
+                    value={addresseComplete}
+                    type="text"
+                    className="block py-2.5 px-1 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                    id="addresseComplete"
+                    placeholder=""
+                    onChange={addresseCompleteHandler}
+                  />
+
+                  <label
+                    htmlFor="addresseComplete"
+                    className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  >
+                    Entrez votre addresse
+                  </label>
                 </div>
 
-                
+                <div className="relative z-0 w-full mb-6 group">
+                  <input
+                    value={telephone}
+                    type="text"
+                    className="block py-2.5 px-1 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                    id="telephone"
+                    placeholder=""
+                    onChange={telephoneHandler}
+                  />
+
+                  <label
+                    htmlFor="telephone"
+                    className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  >
+                    Entrez votre numéro de téléphone
+                  </label>
+                </div>
+
+            
+              </div>
+
+              <div id="inputsEmployeur" className="hidden">
+                <div className="relative z-0 w-full mb-6 group">
+                  <input
+                    value={nomEntreprise}
+                    type="text"
+                    className="block py-2.5 px-1 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                    id="nomEntreprise"
+                    placeholder=""
+                    onChange={nomEntrepriseHandler}
+                  />
+                  <label
+                    htmlFor="nomEntreprise"
+                    className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  >
+                    Entrez votre nom d'entreprise
+                  </label>
+                </div>
+
+                <div className="relative z-0 w-full mb-6 group">
+                  <input
+                    value={addresseComplete}
+                    type="text"
+                    className="block py-2.5 px-1 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                    id="addresseComplete"
+                    placeholder=""
+                    onChange={addresseCompleteHandler}
+                  />
+
+                  <label
+                    htmlFor="addresseComplete"
+                    className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  >
+                    Entrez votre addresse
+                  </label>
+                </div>
+
+                <div className="relative z-0 w-full mb-6 group">
+                  <input
+                    value={telephone}
+                    type="text"
+                    className="block py-2.5 px-1 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                    id="telephone"
+                    placeholder=""
+                    onChange={telephoneHandler}
+                  />
+
+                  <label
+                    htmlFor="telephone"
+                    className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  >
+                    Entrez votre numéro de téléphone
+                  </label>
+                </div>
+
+                <div className="relative z-0 w-full mb-6 group">
+                  <input
+                    value={poste}
+                    type="text"
+                    className="block py-2.5 px-1 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                    id="poste"
+                    placeholder=""
+                    onChange={posteHandler}
+                  />
+
+                  <label
+                    htmlFor="poste"
+                    className="peer-focus:font-medium absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  >
+                    Entrez votre poste de téléphone
+                  </label>
+                </div>
               </div>
             </React.Fragment>
           )}
