@@ -13,7 +13,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
 export default function StagesDisponibles() {
-  const [lesStages, setLesStages] = useState([]);
+  const [lesStagesAffiches, setLesStagesAffiches] = useState([]);
 
   const [open, setOpen] = useState(false);
   
@@ -23,13 +23,16 @@ export default function StagesDisponibles() {
 
   const auth = useContext(AuthContext);
 
+  const [searchIndex, setSearchIndex] = useState("");
+
   async function getStages() {
     try {
       const data = await axios.get("http://localhost:5000/api/stages/");
-
-      const stages = data.data.stages;
-
-      setLesStages(stages);
+      
+      if (data != undefined) { 
+        setLesStagesAffiches(data.data.stages);
+      }
+      
     } catch (err) {
       console.log(err);
     }
@@ -39,58 +42,74 @@ export default function StagesDisponibles() {
     getStages();
   }, []);
 
+  const handleSearchInputChange = (event) => { 
+    event.preventDefault();
+    let value = event.target.value;
+    setSearchIndex(value);
+  }
+
   return (
     <div className="flex justify-center mt-8 mb-8 text-justify">
       <div className="max-w-6xl text-center">
       <h2 className="text-2xl font-bold mb-2">Liste des stages disponibles</h2>
-        <ul className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2">
-          {lesStages
-            .filter((stage) => stage.etudiants.length < stage.nbPoste)
-            .map((stage, index) => (
-              <li
-                className="ml-4 mb-4"
-                key={index}
-                onClick={() => {
-                  setOpen(true);
+        <div className="flex flex-col md:flex-row"> 
+          <div className="flex-shrink">
+            <form className="">
+              <label>
+                Rechercher : 
+                <input onChange={handleSearchInputChange}/>
+              </label>
+                <input type='checkbox'/>
+            </form>
+          </div>
+          <div>
+            <ul className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2">
+              {lesStagesAffiches
+                .filter((stage) => {return (stage.etudiants.length < stage.nbPoste && stage.description.includes(searchIndex)) })
+                .map((stage, index) => (
+                  <li
+                    className="ml-4 mb-4"
+                    key={index}
+                    onClick={() => {
+                      setOpen(true);
+                      // console.log(auth.userId);                    
+                      setStageId(stage._id);
+                    }}
+                  >
+                    <Card className="text-center max-w-xl rounded overflow-hidden shadow-lg flex flex-col bg-white hover:bg-gray">
+                      <h3>{stage.nomEntreprise}</h3>
+                      <h3>
+                        {" "}
+                        <span className="font-semibold">Personne contact: </span>
+                        {stage.nomContact}
+                      </h3>
+                      <h3>
+                        <span className="font-semibold">Courriel: </span>
+                        {stage.courrielContact}
+                      </h3>
 
-                  
-                console.log(auth.userId);
-
-                  setStageId(stage._id);
-                }}
-              >
-                <Card className="text-center max-w-xl rounded overflow-hidden shadow-lg flex flex-col bg-white hover:bg-gray">
-                  <h3>{stage.nomEntreprise}</h3>
-                  <h3>
-                    {" "}
-                    <span className="font-semibold">Personne contact: </span>
-                    {stage.nomContact}
-                  </h3>
-                  <h3>
-                    <span className="font-semibold">Courriel: </span>
-                    {stage.courrielContact}
-                  </h3>
-
-                  <h3>
-                    <span className="font-semibold">Adresse: </span>
-                    {stage.adresseEntreprise}
-                  </h3>
-                  <h3>
-                    <span className="font-semibold">Type de stage: </span>
-                    {stage.type}
-                  </h3>
-                  <h3>
-                    <span className="font-semibold">Postes disponibles: </span>
-                    {stage.nbPoste}
-                  </h3>
-                  <h3>
-                    <span className="font-semibold">Description: </span>
-                    {stage.description}
-                  </h3>
-                </Card>
-              </li>
-            ))}
-        </ul>
+                      <h3>
+                        <span className="font-semibold">Adresse: </span>
+                        {stage.adresseEntreprise}
+                      </h3>
+                      <h3>
+                        <span className="font-semibold">Type de stage: </span>
+                        {stage.type}
+                      </h3>
+                      <h3>
+                        <span className="font-semibold">Postes disponibles: </span>
+                        {stage.nbPoste}
+                      </h3>
+                      <h3>
+                        <span className="font-semibold">Description: </span>
+                        {stage.description}
+                      </h3>
+                    </Card>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        </div>
       </div>
 
       <Dialog open={open} onClose={() => setOpen(false)}>
