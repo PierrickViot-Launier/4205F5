@@ -56,10 +56,6 @@ export default function StagesPostules() {
                   {stage.adresseEntreprise}
                 </h3>
                 <h3>
-                  <span className="font-semibold">Type de stage: </span>
-                  {stage.type}
-                </h3>
-                <h3>
                   <span className="font-semibold">Postes disponibles: </span>
                   {stage.nbPoste}
                 </h3>

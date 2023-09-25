@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.post("/inscription", controleursEmployeurs.inscription);
 router.get("/:userId/stages", controleursEmployeurs.getStagesByUserId);
+router.get("/:userId", controleursEmployeurs.getEmployeurById);
 //router.post('/connexion', controleursEmployeurs.connexion);
 module.exports = router;
