@@ -46,7 +46,10 @@ export default function ModifierProfilScreen() {
 
 
     const [formState, inputHandler, setFormData] = useForm({
-
+            courriel: {
+                value: "",
+                isValid: false
+            }
         },
         false
     );
@@ -54,18 +57,19 @@ export default function ModifierProfilScreen() {
 
     const formSubmitHandler = async (event) => {
         event.preventDefault();
-        let url = "http://localhost:5000/api/utilisateurs/getProfileByUserID/" + auth.userId;
+        let url = "http://localhost:5000/api/utilisateurs/setProfileByUserID/" + auth.userId;
 
         let responseObj;
         try {
             responseObj = await sendRequest(url, "POST",
-            JSON.stringify({
-
-            }),
-            {
-                "Content-Type": "application/json"
-            });
-            setDonnees(responseObj.profile);
+                JSON.stringify({
+                    courriel: formState.inputs.courriel.value
+                }),
+                {
+                    "Content-Type": "application/json"
+                }
+            );
+            // setDonnees(responseObj.profile);
 
         }
         catch (err) {
@@ -90,7 +94,7 @@ export default function ModifierProfilScreen() {
                                     </Button>
                                     <Input
                                         element="input"
-                                        id="email"
+                                        id="courriel"
                                         type="email"
                                         label="Courriel"
                                         validators={[VALIDATOR_REQUIRE(), VALIDATOR_EMAIL()]}
