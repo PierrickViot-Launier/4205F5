@@ -6,8 +6,13 @@ import { useHttpClient } from "../shared/hooks/http-hook";
 import { useContext } from "react";
 import { AuthContext } from "../shared/context/auth-context";
 
+import Input from "../Components/Form/Input";
+import Button from "../Components/Form/Button";
+import { VALIDATOR_REQUIRE, VALIDATOR_EMAIL } from "../shared/util/validators";
+import { useForm } from "../shared/hooks/form-hook";
+
 export default function ModifierProfilScreen() {
-    const { sendRequest } = useHttpClient();
+    const { error, sendRequest } = useHttpClient();
 
     const auth = useContext(AuthContext);
     
@@ -18,40 +23,54 @@ export default function ModifierProfilScreen() {
 
     if (!donnees) {
         (async () => {
-            let url = "http://localhost:5000/api/";
-            if (auth.isEtudiant) {
-                url += "etudiants/" + auth.userId;
-            }
-            else if (auth.isEmployeur) {
-                url += "employeurs/" + auth.userId;
-            }
+            let url = "http://localhost:5000/api/utilisateurs/getProfileByUserID/" + auth.userId;
+            
     
             let responseObj;
             try {
                 responseObj = await sendRequest(url, "GET", undefined, {});
-                setDonnees(responseObj.etudiant);
+                setDonnees(responseObj.profile);
+
+                
             }
             catch (err) {
     
             }
     
-            if (auth.isEtudiant) {
-                setDonnees(responseObj.etudiant);
-            }
-            else if (auth.isEmployeur) {
-                
-            }
-    
+            // setDonnees(responseObj.etudiant);
+
+            
     
         })();
     }
 
 
+    const [formState, inputHandler, setFormData] = useForm({
+
+        },
+        false
+    );
 
 
-
-    function formSubmitHandler(event) {
+    const formSubmitHandler = async (event) => {
         event.preventDefault();
+        let url = "http://localhost:5000/api/utilisateurs/getProfileByUserID/" + auth.userId;
+
+        let responseObj;
+        try {
+            responseObj = await sendRequest(url, "POST",
+            JSON.stringify({
+
+            }),
+            {
+                "Content-Type": "application/json"
+            });
+            setDonnees(responseObj.profile);
+
+        }
+        catch (err) {
+
+        }
 
 
     }
@@ -65,7 +84,26 @@ export default function ModifierProfilScreen() {
                     ?
                         (
                             <>
-                                asdf
+                                <form onSubmit={formSubmitHandler}>
+                                    <Button type="submit" disabled={!formState.isValid}>
+                                        Sauvegarder
+                                    </Button>
+                                    <Input
+                                        element="input"
+                                        id="email"
+                                        type="email"
+                                        label="Courriel"
+                                        validators={[VALIDATOR_REQUIRE(), VALIDATOR_EMAIL()]}
+                                        errorText="Entrez un courriel valide."
+                                        onInput={inputHandler}
+                                    />
+
+                                </form>
+
+
+
+
+                                
                             </>
                         )
                     :
@@ -75,9 +113,6 @@ export default function ModifierProfilScreen() {
                             </>
                         )
                 }
-                <form method="POST" onSubmit={formSubmitHandler}>
-
-                </form>
 
             </Card>
         </div>
