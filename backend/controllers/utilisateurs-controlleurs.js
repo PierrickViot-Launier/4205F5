@@ -51,7 +51,7 @@ reponse.json({
 
 //récupérer un profil de l'user dans les etudiants, les employeurs ou etc, et non dans controlleurs correspondants
 const getProfileByCourriel = async (requete, reponse, next) => {
-  const { courriel } = requete.body;
+  const courriel = requete.params.courriel;
 
   try {
     const etudiant = await Etudiant.findOne({ courriel: courriel });
@@ -95,10 +95,54 @@ const getProfileByCourriel = async (requete, reponse, next) => {
   return next(new HttpErreur("Utilisateur introuvable", 404));
 }
 
+const getProfileByUserID = async (requete, reponse, next) => {
+  const userID = requete.params.userID;
+  try {
+    const etudiant = await Etudiant.findById(userID);
+    if (!etudiant) {
+      throw new Error("etudiant not found");
+    }
+    reponse.json({
+      typeUtilisateur: "etudiant",
+      profile: etudiant.toObject()
+    });
+  }
+  catch (err) {
+    try {
+      const employeur = await Employeur.findById(userID);
+      if (!employeur) {
+        throw new Error("employeur not found");
+      }
+      reponse.json({
+        typeUtilisateur: "employeur",
+        profile: employeur.toObject()
+      });
+    }
+    catch (err) {
+      try {
+        const coordonateur = await Cordonnateur.findById(userID);
+        if (!coordonateur) {
+          throw new Error("coordonateur not found");
+        }
+        response.json({
+          typeUtilisateur: "coordonateur",
+          profile: coordonateur.toObject()
+        });
+      }
+      catch (err) {
+
+      }
+    }
+  }
+
+
+  return next(new HttpErreur("Utilisateur introuvable", 404));
+}
 
 
 
 module.exports = {
   connexion,
-  getProfileByCourriel
+  getProfileByCourriel,
+  getProfileByUserID
 };
