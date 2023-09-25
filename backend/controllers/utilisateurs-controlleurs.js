@@ -28,7 +28,7 @@ const connexion = async (requete, reponse, next) => {
     if (!utilisateurExiste) {
       try {
         utilisateurExiste = await Cordonnateur.findOne({ courriel: courriel });
-        typeUtilisateur = "cordonnateur"
+        typeUtilisateur = "coordonnateur"
       } catch (err) {
         return next(
           new HttpErreur("Connexion échouée, veuillez réessayer plus tard", 500, err.message)
@@ -47,4 +47,58 @@ reponse.json({
   utilisateur: utilisateurExiste.toObject({ getters: true })
 });
 };
-exports.connexion = connexion;
+
+
+//récupérer un profil de l'user dans les etudiants, les employeurs ou etc, et non dans controlleurs correspondants
+const getProfileByCourriel = async (requete, reponse, next) => {
+  const { courriel } = requete.body;
+
+  try {
+    const etudiant = await Etudiant.findOne({ courriel: courriel });
+    if (!etudiant) {
+      throw new Error("etudiant not found");
+    }
+    reponse.json({
+      typeUtilisateur: "etudiant",
+      profile: etudiant.toObject()
+    });
+  }
+  catch (err) {
+    try {
+      const employeur = await Employeur.findOne({ courriel: courriel });
+      if (!employeur) {
+        throw new Error("employeur not found");
+      }
+      reponse.json({
+        typeUtilisateur: "employeur",
+        profile: employeur.toObject()
+      });
+    }
+    catch (err) {
+      try {
+        const coordonateur = await Cordonnateur.findOne({ courriel: courriel });
+        if (!coordonateur) {
+          throw new Error("coordonateur not found");
+        }
+        response.json({
+          typeUtilisateur: "coordonateur",
+          profile: coordonateur.toObject()
+        });
+      }
+      catch (err) {
+
+      }
+    }
+  }
+
+
+  return next(new HttpErreur("Utilisateur introuvable", 404));
+}
+
+
+
+
+module.exports = {
+  connexion,
+  getProfileByCourriel
+};

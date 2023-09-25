@@ -4,5 +4,6 @@ const controleursUtilisateurs = require("../controllers/utilisateurs-controlleur
 const router = express.Router();
 
 router.post('/connexion', controleursUtilisateurs.connexion);
+router.get("/getProfileByCourriel", controleursUtilisateurs.getProfileByCourriel);
 
 module.exports = router;

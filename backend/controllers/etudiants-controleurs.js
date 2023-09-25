@@ -5,7 +5,7 @@ const Etudiant = require("../models/etudiant");
 const Stage = require("../models/stage");
 
 const inscription = async (requete, reponse, next) => {
-  const { DA, nom, courriel, motDePasse, telephone, addresseComplete } = requete.body;
+  const { DA, nom, courriel, motDePasse, telephone, addresse } = requete.body;
 
   let etudiantExiste;
 
@@ -27,7 +27,7 @@ const inscription = async (requete, reponse, next) => {
     courriel,
     motDePasse,
     telephone,
-    addresseComplete,
+    addresse,
     stagesPostule: [],
     stage: null,
   });
