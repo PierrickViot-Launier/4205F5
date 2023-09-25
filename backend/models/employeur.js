@@ -7,8 +7,7 @@ const employeurSchema = new Schema({
   nomEntreprise: { type: String, required: true},
   courriel: { type: String, required: true },
   motDePasse: { type: String, required: true },
-  nomEntreprise: { type: String, required: true },
-  addresse: { type: String, required: true },
+  adresse: { type: String, required: true },
   telephone: { type: String, required: true },
   poste: { type: String, required: true },
   stages: [{ type: mongoose.Types.ObjectId, ref: "Stage" }]

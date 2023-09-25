@@ -353,16 +353,16 @@ export default function Auth() {
               </div>
               <div id="inputsEmployeur" className="hidden">
                 <div className="relative z-0 w-full mb-6 group">
-                  <input
+                  {/* <input
                     value={nomEntreprise}
                     type="text"
                     className="block py-2.5 px-1 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                     id="nomEntreprise"
                     placeholder=""
                     onChange={nomEntrepriseHandler}
-                  />
+                  /> */}
 
-                <div className="relative z-0 w-full mb-6 group">
+                {/* <div className="relative z-0 w-full mb-6 group">
                   <input
                     value={telephone}
                     type="text"
@@ -378,10 +378,9 @@ export default function Auth() {
                   >
                     Entrez votre numéro de téléphone
                   </label>
-                </div>
+                </div> */}
 
             
-              {/* </div> */}
 
               {/* <div id="inputsEmployeur" className="hidden"> */}
                 <div className="relative z-0 w-full mb-6 group">

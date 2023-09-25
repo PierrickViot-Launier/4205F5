@@ -93,7 +93,7 @@ const getProfileByCourriel = async (requete, reponse, next) => {
 
 
   return next(new HttpErreur("Utilisateur introuvable", 404));
-}
+};
 
 const getProfileByUserID = async (requete, reponse, next) => {
   const userID = requete.params.userID;
@@ -130,19 +130,73 @@ const getProfileByUserID = async (requete, reponse, next) => {
         });
       }
       catch (err) {
+        return next(new HttpErreur("Utilisateur introuvable", 404));
 
       }
     }
   }
 
 
-  return next(new HttpErreur("Utilisateur introuvable", 404));
-}
+};
+
+
+const setProfileByUserID = async (requete, reponse, next) => {
+  const userID = requete.params.userID;
+
+  function setExistingProperties(modelObj) {
+    for (const property in requete.body) {
+      modelObj[property] = requete.body[property];
+    }
+  }
+
+  //todo: il faudrait faire les validations server-side au lieu de faire confience au client
+
+  try {
+
+    try {
+      const etudiant = await Etudiant.findById(userID);
+      setExistingProperties(etudiant);
+      await etudiant.save();
+    }
+    catch (err) {
+      try {
+        const employeur = await Employeur.findById(userID);
+        console.log("employeur");
+        console.log(employeur.toObject());
+        setExistingProperties(employeur);
+        console.log(employeur.toObject());
+        try {
+          await employeur.save();
+        }
+        catch (err) {
+          console.log(err);
+          return next(new HttpErreur("Erreur pendant la sauvegarde de l'employeur", 500, err));
+        }
+      }
+      catch (err) {
+        try {
+          const coordonateur = await Cordonnateur.findById(userID);
+          setExistingProperties(coordonateur);
+          await coordonateur.save();
+        }
+        catch (err) {
+          return next(new HttpErreur("Erreur pendant la modification du profile", 500, err));
+        }
+      }
+    }
+
+    reponse.json({});
+  }
+  catch (err) {
+    return next(new HttpErreur("Erreur pendant la modification du profile", 500, err));
+  }
+};
 
 
 
 module.exports = {
   connexion,
   getProfileByCourriel,
-  getProfileByUserID
+  getProfileByUserID,
+  setProfileByUserID
 };
