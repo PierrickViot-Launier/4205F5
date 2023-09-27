@@ -21,28 +21,6 @@ export default function ModifierProfilScreen() {
     const [donnees, setDonnees] = useState(null);
 
 
-    if (!donnees) {
-        (async () => {
-            let url = "http://localhost:5000/api/utilisateurs/getProfileByUserID/" + auth.userId;
-            
-    
-            let responseObj;
-            try {
-                responseObj = await sendRequest(url, "GET", undefined, {});
-                setDonnees(responseObj.profile);
-
-                
-            }
-            catch (err) {
-    
-            }
-    
-            // setDonnees(responseObj.etudiant);
-
-            
-    
-        })();
-    }
 
 
     const [formState, inputHandler, setFormData] = useForm({
@@ -54,6 +32,24 @@ export default function ModifierProfilScreen() {
         false
     );
 
+    if (!donnees) {
+        (async () => {
+            let url = "http://localhost:5000/api/utilisateurs/getProfileByUserID/" + auth.userId;
+    
+            let responseObj;
+            try {
+                responseObj = await sendRequest(url, "GET", undefined, {});
+                setDonnees(responseObj.profile);
+                
+                
+
+            }
+            catch (err) {
+    
+            }
+    
+        })();
+    }
 
     const formSubmitHandler = async (event) => {
         event.preventDefault();
