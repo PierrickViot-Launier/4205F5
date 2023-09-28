@@ -18,7 +18,7 @@ WORKDIR /app
 RUN npm run build
 
 # s'il faut distribuer en http :
-CMD ["serve", "-s", "build"]
+# CMD ["serve", "-s", "build"]
 
 # s'il faut distribuer en https :
-# CMD ["serve", "--cors", "-s", "build", "--ssl-cert", "ssl/server.cert", "--ssl-key", "ssl/server.key"]
+CMD ["serve", "--cors", "-s", "build", "--ssl-cert", "ssl/server.cert", "--ssl-key", "ssl/server.key"]

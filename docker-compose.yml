@@ -1,4 +1,10 @@
 
+
+
+# tout les services, sauf nginx, sont seulement bindé à loopback et à rien d'autre afin qu'ils ne soient pas accessible à partir d'internet. 
+# à noter que les échanges entre les différent containers ne passent pas par l'interface de loopback du host.
+# les ports auxquels les containers sont bindé dans le loopback sont incrémenté de 1 pour ne pas faire une collision avec un potentiel service qui l'utilise sur le host.
+
 services:
   frontend:
     container_name: gestionstage_frontend
@@ -19,9 +25,6 @@ services:
     image: "mongo:latest"
     container_name: gestionstage_database
     ports:
-        # la base de donnée est seulement accessible depuis loopback pour pas qu'on puisse s'y connecter depuis internet.
-        # elle est sur un port différent du port de mongo pour ne pas faire une collision avec une installation de mongo sur le host.
-		# à noter que le backend n'utilise pas cet interface pour se connecter à la base de données.
       - 127.0.0.1:27018:27017
     volumes:
       - ./data:/data/db

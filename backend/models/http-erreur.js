@@ -15,8 +15,8 @@ class HttpErreur extends Error {
         this.code = code;
         this.internalErrorMessage = internalErrorMessage;
 
-        //on check si nous sommes en "debug" mode, en en "dev" mode, et on ajoute le message d'erreur interne au message d'erreur potentiellement donné à un client externe
-        if (true && !!internalErrorMessage) {
+        //on check si nous sommes en "debug" mode, ou en "dev" mode, et on ajoute le message d'erreur interne au message d'erreur potentiellement donné à un client externe
+        if (process.env.mode == "dev" && !!internalErrorMessage) {
             this.message += " : " + internalErrorMessage;
         }
         

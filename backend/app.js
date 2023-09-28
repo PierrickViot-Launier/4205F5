@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const https = require("https");
+const fs = require("fs");
 require("dotenv").config();
 mongoose.set("strictQuery", true);
 
@@ -49,8 +51,22 @@ console.log("connection string : " + connectionString);
 mongoose
   .connect(connectionString)
   .then(() => {
-    app.listen(5000);
     console.log("Connexion à la base de données réussie");
+    if (process.env.mode == "prod") {
+      console.log("starting https server");
+
+      const httpsServer = https.createServer({
+        key: fs.readFileSync("./ssl/server.key", "utf8"),
+        cert: fs.readFileSync("./ssl/server.cert", "utf8")
+      }, app);
+      httpsServer.listen(process.env.app_listen_port);
+
+    }
+    else {
+      console.log("starting http server");
+      app.listen(process.env.app_listen_port);
+
+    }
   })
   .catch((erreur) => {
     console.log(erreur);
