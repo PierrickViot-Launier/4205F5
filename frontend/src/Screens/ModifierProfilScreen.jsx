@@ -10,6 +10,7 @@ import Input from "../Components/Form/Input";
 import Button from "../Components/Form/Button";
 import { VALIDATOR_REQUIRE, VALIDATOR_EMAIL } from "../shared/util/validators";
 import { useForm } from "../shared/hooks/form-hook";
+import { config } from "../config";
 
 export default function ModifierProfilScreen() {
     const { error, sendRequest } = useHttpClient();
@@ -34,7 +35,7 @@ export default function ModifierProfilScreen() {
 
     if (!donnees) {
         (async () => {
-            let url = "http://localhost:5000/api/utilisateurs/getProfileByUserID/" + auth.userId;
+            let url = config.backend + "/api/utilisateurs/getProfileByUserID/" + auth.userId;
     
             let responseObj;
             try {
@@ -53,7 +54,7 @@ export default function ModifierProfilScreen() {
 
     const formSubmitHandler = async (event) => {
         event.preventDefault();
-        let url = "http://localhost:5000/api/utilisateurs/setProfileByUserID/" + auth.userId;
+        let url = config.backend + "/api/utilisateurs/setProfileByUserID/" + auth.userId;
 
         let responseObj;
         try {

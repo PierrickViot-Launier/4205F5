@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Card from "../../shared/Card";
 import { useState } from "react";
 import { AuthContext } from "../../shared/context/auth-context";
+import { config } from "../../config";
 
 export default function StagesPostules() {
   const [lesStages, setLesStages] = useState([]);
@@ -13,7 +14,7 @@ export default function StagesPostules() {
   async function getStages() {
     try {
       const data = await axios.get(
-        "http://localhost:5000/api/etudiants/" + auth.userId + "/stages/"
+        config.backend + "/api/etudiants/" + auth.userId + "/stages/"
       );
 
       const stages = data.data.stages;

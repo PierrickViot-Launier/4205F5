@@ -12,6 +12,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
+import { config } from "../../config";
+
 
 export default function Etudiants() {
   const [lesEtudiants, setLesEtudiants] = useState([]);
@@ -27,7 +29,7 @@ export default function Etudiants() {
 
   async function getEtudiants() {
     try {
-      const data = await axios.get("http://localhost:5000/api/etudiants/");
+      const data = await axios.get(config.backend + "/api/etudiants/");
 
       const etudiants = data.data.etudiants;
 
@@ -41,7 +43,7 @@ export default function Etudiants() {
 
   async function getStages(type) {
     try {
-      const data = await axios.get("http://localhost:5000/api/stages/");
+      const data = await axios.get(config.backend + "/api/stages/");
 
       const stages = data.data.stages;
 
@@ -59,7 +61,7 @@ export default function Etudiants() {
 
   async function getProfilEtudiant(id) {
     try {
-      const data = await axios.get("http://localhost:5000/api/etudiants/" + id);
+      const data = await axios.get(config.backend + "/api/etudiants/" + id);
 
       const etudiant = data.data.etudiant;
       setType(etudiant.profil);
@@ -177,7 +179,7 @@ export default function Etudiants() {
 
               try {
                 await axios.patch(
-                  "http://localhost:5000/api/etudiants/" + etudiantId,
+                  config.backend + "/api/etudiants/" + etudiantId,
                   { stageId: stageSelectionne }
                 );
               } catch (err) {}

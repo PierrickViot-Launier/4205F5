@@ -8,6 +8,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { config } from "../../config";
 
 export default function NouveauStage() {
   const auth = useContext(AuthContext);
@@ -24,7 +25,7 @@ export default function NouveauStage() {
 
   async function getEmployeur() {
     try {
-      const data = await axios.get("http://localhost:5000/api/employeurs/" + auth.userId);
+      const data = await axios.get(config.backend + "/api/employeurs/" + auth.userId);
 
       const employeur = data.data.employeur;
       console.log(employeur)
@@ -88,7 +89,7 @@ export default function NouveauStage() {
     };
 
     try {
-      await axios.post("http://localhost:5000/api/stages/creation/", payload);
+      await axios.post(config.backend + "/api/stages/creation/", payload);
       setPersonneContact("");
       setCourriel("");
       setTelephone("");

@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+require("dotenv").config();
 mongoose.set("strictQuery", true);
 
 // const placesRoutes = require("./routes/places-routes");
@@ -42,8 +43,11 @@ app.use((error, requete, reponse, next) => {
   });
 });
 
+const connectionString = `mongodb://${process.env.database_host}:${process.env.database_port}/${process.env.database_name}`;
+// const connectionString = "mongodb://database:27017/gestionstage";
+console.log("connection string : " + connectionString);
 mongoose
-  .connect("mongodb://127.0.0.1:27017")
+  .connect(connectionString)
   .then(() => {
     app.listen(5000);
     console.log("Connexion à la base de données réussie");

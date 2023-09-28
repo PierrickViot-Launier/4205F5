@@ -10,6 +10,7 @@ import TextField from "@mui/material/TextField";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import { config } from "../../config";
 
 export default function OffresDeStage() {
   const [lesStages, setLesStages] = useState([]);
@@ -23,7 +24,7 @@ export default function OffresDeStage() {
   async function getStages() {
     if (auth.isCordonnateur) {
       try {
-        const data = await axios.get("http://localhost:5000/api/stages/");
+        const data = await axios.get(config.backend + "/api/stages/");
 
         const stages = data.data.stages;
 
@@ -32,7 +33,7 @@ export default function OffresDeStage() {
     } else {
       try {
         const data = await axios.get(
-          "http://localhost:5000/api/employeurs/" + auth.userId + "/stages/"
+          config.backend + "/api/employeurs/" + auth.userId + "/stages/"
         );
 
         const stages = data.data.stages;
@@ -142,7 +143,7 @@ export default function OffresDeStage() {
 
               try {
                 await axios.delete(
-                  "http://localhost:5000/api/stages/" + stageId,
+                  config.backend + "/api/stages/" + stageId,
                   { etudiantId: auth.userId, stageId }
                 );
 
@@ -160,7 +161,7 @@ export default function OffresDeStage() {
 
               try {
                 await axios.patch(
-                  "http://localhost:5000/api/stages/" + stageId,
+                  config.backend + "/api/stages/" + stageId,
                   {
                     remuneration,
                     nbPoste,

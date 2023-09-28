@@ -11,6 +11,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { config } from "../../config";
 
 export default function StagesDisponibles() {
   const [lesStages, setLesStages] = useState([]);
@@ -25,7 +26,7 @@ export default function StagesDisponibles() {
 
   async function getStages() {
     try {
-      const data = await axios.get("http://localhost:5000/api/stages/");
+      const data = await axios.get(config.backend + "/api/stages/");
 
       const stages = data.data.stages;
 
@@ -105,7 +106,7 @@ export default function StagesDisponibles() {
 
               try {
                 await axios.patch(
-                  "http://localhost:5000/api/etudiants/postulation",
+                  config.backend + "/api/etudiants/postulation",
                   { etudiantId: auth.userId, stageId }
                 );
               } catch (err) {

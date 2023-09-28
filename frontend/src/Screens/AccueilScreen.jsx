@@ -3,7 +3,6 @@ import React from "react";
 export default function AccueilScreen() {
   const annee = new Date().getFullYear();
 
-  console.log();
 
   return (
     <div className="flex justify-center mt-8 mb-8 text-justify">

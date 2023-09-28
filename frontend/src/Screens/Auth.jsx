@@ -19,6 +19,8 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { config } from "../config";
+
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -137,8 +139,9 @@ export default function Auth() {
     event.preventDefault();
     if (isLoginMode) {
       try {
+        console.log(config.backend + "/api/utilisateurs/connexion");
         const reponseData = await sendRequest(
-          "http://localhost:5000/api/utilisateurs/connexion",
+          config.backend + "/api/utilisateurs/connexion",
           "POST",
           JSON.stringify({
             courriel: formState.inputs.email.value,
@@ -183,7 +186,7 @@ export default function Auth() {
       try {
         if (auth.isEmployeur) {
           const reponseData = await sendRequest(
-            "http://localhost:5000/api/employeurs/inscription",
+            config.backend + "/api/employeurs/inscription",
             "POST",
             JSON.stringify({
               nom: formState.inputs.name.value,
@@ -209,7 +212,7 @@ export default function Auth() {
         }
         else if (auth.isEtudiant) {
           const reponseData = await sendRequest(
-            "http://localhost:5000/api/etudiants/inscription",
+            config.backend + "/api/etudiants/inscription",
             "POST",
             JSON.stringify({
               DA: DA,
