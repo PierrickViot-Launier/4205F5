@@ -30,8 +30,8 @@ export default function OffresDeStage() {
         const stages = data.data.stages;
 
         setLesStagesAffiches(stages);
-      } catch {
-
+      } catch (err) {
+        console.log(err)
       }
     } else {
       try {
