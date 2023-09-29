@@ -11,6 +11,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import SearchInput from "../Form/SearchInput";
 
 export default function StagesDisponibles() {
   const [lesStagesAffiches, setLesStagesAffiches] = useState([]);
@@ -42,24 +43,11 @@ export default function StagesDisponibles() {
     getStages();
   }, []);
 
-  const handleSearchInputChange = (event) => {
-    event.preventDefault();
-    let value = event.target.value;
-    setSearchIndex(value);
-  }
-
   return (
-
     <div className="flex justify-center mt-8 mb-8 text-justify">
       <div className="max-w-6xl text-center">
         <h2 className="text-2xl font-bold mb-2">Liste des stages disponibles</h2>
-        <form className="justify-center">
-          <label>
-            Rechercher :
-            <input onChange={handleSearchInputChange} />
-          </label>
-          <input type='checkbox' />
-        </form>
+        <SearchInput searchIndex={searchIndex} setSearchIndex={setSearchIndex}/>
         <ul className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2">
           {lesStagesAffiches
             .filter((stage) => { return (stage.etudiants.length < stage.nbPoste && (stage.description.includes(searchIndex) || stage.nomEntreprise.includes(searchIndex))) })
