@@ -18,9 +18,9 @@ export default function NavLinks() {
         <NavLink to={"/FAQ"}>FAQ</NavLink>
       </li>
 
-      <li>
+      {/* <li>
         <NavLink to={"/Profils"}>Profils et compétences</NavLink>
-      </li>
+      </li> */}
 
       <li>
         <NavLink to={"/Deroulement"}>Déroulement du stage</NavLink>

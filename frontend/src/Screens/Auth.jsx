@@ -219,8 +219,8 @@ export default function Auth() {
               nom: formState.inputs.name.value,
               courriel: formState.inputs.email.value,
               motDePasse: formState.inputs.password.value,
-              adresse,
-              telephone
+              telephone,
+              adresse
             }),
             {
               "Content-Type": "application/json",
