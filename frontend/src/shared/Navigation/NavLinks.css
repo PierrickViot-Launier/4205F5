@@ -36,7 +36,7 @@
   font: inherit;
   border: 1px solid white;
   color: white;
-  background: transparent;
+  /*background: transparent;*/
 }
 
 .navLinks button:focus {
