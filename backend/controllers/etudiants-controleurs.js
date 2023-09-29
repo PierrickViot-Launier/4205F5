@@ -5,7 +5,7 @@ const Etudiant = require("../models/etudiant");
 const Stage = require("../models/stage");
 
 const inscription = async (requete, reponse, next) => {
-  const { DA, nom, courriel, motDePasse, telephone, addresse } = requete.body;
+  const { DA, nom, courriel, motDePasse, telephone, adresse } = requete.body;
 
   let etudiantExiste;
 
@@ -27,7 +27,7 @@ const inscription = async (requete, reponse, next) => {
     courriel,
     motDePasse,
     telephone,
-    addresse,
+    adresse,
     stagesPostule: [],
     stage: null,
   });
@@ -46,7 +46,7 @@ const inscription = async (requete, reponse, next) => {
 const modificationProfil = async (requete, reponse, next) => {
   const etudiantId = requete.params.etudiantId;
   const etudiantPassword = requete.params.etudiantPassword;
-  const { DA, nom, courriel, motDePasse, telephone, addresseComplete } = requete.body;
+  const { DA, nom, courriel, motDePasse, telephone, adresse } = requete.body;
 
   let etudiant = null;
 
@@ -67,7 +67,7 @@ const modificationProfil = async (requete, reponse, next) => {
     etudiant.courriel = courriel;
     etudiant.motDePasse = motDePasse;
     etudiant.telephone = telephone;
-    etudiant.addresseComplete = addresseComplete;
+    etudiant.adresse = adresse;
     await etudiant.save();
   }
   catch (err) {
