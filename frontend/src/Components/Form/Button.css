@@ -3,8 +3,8 @@
     padding: 0.5rem 1.5rem;
     border: 1px solid #ff0055;
     border-radius: 4px;
-    background-color: #FF0000 !important;
-    background: #ff0055;
+    /*background-color: #FF0000 !important;*/
+    background: #ff0055 !important;
     color: white;
     cursor: pointer;
     margin-right: 1rem;
@@ -18,7 +18,7 @@
   
   .button:hover,
   .button:active {
-    background: #ff4382;
+    background: #ff4382 !important;
     border-color: #ff4382;
   }
   
@@ -47,9 +47,9 @@
   .button:disabled,
   .button:hover:disabled,
   .button:active:disabled {
-    background: #ccc;
-    color: #979797;
-    border-color: #ccc;
+    background: #ccc !important;
+    color: #979797 !important;
+    border-color: #ccc !important;
     cursor: not-allowed;
   }
   
