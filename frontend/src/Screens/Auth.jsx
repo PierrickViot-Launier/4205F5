@@ -139,7 +139,7 @@ export default function Auth() {
     event.preventDefault();
     if (isLoginMode) {
       try {
-        console.log(config.backend + "/api/utilisateurs/connexion");
+        // console.log(config.backend + "/api/utilisateurs/connexion");
         const reponseData = await sendRequest(
           config.backend + "/api/utilisateurs/connexion",
           "POST",
@@ -178,7 +178,7 @@ export default function Auth() {
       } catch (err) {
         messageErreur = err.message;
 
-        console.log(messageErreur);
+        // console.log(messageErreur);
 
         setOpen(true);
       }
@@ -237,7 +237,7 @@ export default function Auth() {
         }
       } catch (err) {
         messageErreur = err;
-        console.log(messageErreur);
+        // console.log(messageErreur);
         setOpen(true);
       }
     }

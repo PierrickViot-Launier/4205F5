@@ -19,7 +19,7 @@ export default function StagesPostules() {
 
       const stages = data.data.stages;
 
-      console.log(data);
+      // console.log(data);
 
       // console.log(stages);
 

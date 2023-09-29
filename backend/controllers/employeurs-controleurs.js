@@ -75,11 +75,11 @@ const getStagesByUserId = async (requete, reponse, next) => {
     );
   }
 
-  if (!stages || stages.length === 0) {
-    return next(
-      new HttpErreur("Aucun stage trouvé pour l'employeur fourni", 404)
-    );
-  }
+  // if (!stages) {
+  //   return next(
+  //     new HttpErreur("Aucun stage trouvé pour l'employeur fourni", 404)
+  //   );
+  // }
 
   reponse.json({
     stages: stages.map((stage) => stage.toObject({ getters: true })),

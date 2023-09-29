@@ -28,12 +28,12 @@ export default function NouveauStage() {
       const data = await axios.get(config.backend + "/api/employeurs/" + auth.userId);
 
       const employeur = data.data.employeur;
-      console.log(employeur)
-      console.log(auth.userId)
+      // console.log(employeur)
+      // console.log(auth.userId)
       setNomEntreprise(employeur.nomEntreprise);
       setAdresse(employeur.adresseEntreprise);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   }
 
@@ -102,7 +102,7 @@ export default function NouveauStage() {
 
       auth.modification(new Date().toLocaleString());
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       setOpenError(true);
     }
   }

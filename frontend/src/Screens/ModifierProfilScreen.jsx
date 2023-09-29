@@ -21,8 +21,8 @@ export default function ModifierProfilScreen() {
     // object qui contient les données de l'utilisateur, que ce soit un étudiant, employeur, coordonateur, etc.
     const [donnees, setDonnees] = useState(null);
 
-    console.log(auth);
-    console.log(donnees);
+    // console.log(auth);
+    // console.log(donnees);
 
 
     const [formState, inputHandler, setFormData] = useForm({
@@ -75,8 +75,8 @@ export default function ModifierProfilScreen() {
 
         }
 
-        console.log(auth);
-        console.log(formState);
+        // console.log(auth);
+        // console.log(formState);
 
         let responseObj;
         try {

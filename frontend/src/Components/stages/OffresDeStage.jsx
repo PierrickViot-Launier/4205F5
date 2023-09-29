@@ -48,13 +48,13 @@ export default function OffresDeStage() {
   function remunerationHandler(event) {
     setRemuneration(event.target.value);
 
-    console.log(event.target.value);
+    // console.log(event.target.value);
   }
 
   function nbPosteHandler(event) {
     setNbPoste(event.target.value);
 
-    console.log(event.target.value);
+    // console.log(event.target.value);
   }
 
   useEffect(() => {
@@ -170,7 +170,7 @@ export default function OffresDeStage() {
 
                 auth.modification(new Date().toLocaleString());
               } catch (e) {
-                console.log("22", e);
+                // console.log("22", e);
               }
 
               getStages();

@@ -32,7 +32,7 @@ export default function StagesDisponibles() {
 
       setLesStages(stages);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   }
 
@@ -55,7 +55,7 @@ export default function StagesDisponibles() {
                   setOpen(true);
 
                   
-                console.log(auth.userId);
+                // console.log(auth.userId);
 
                   setStageId(stage._id);
                 }}

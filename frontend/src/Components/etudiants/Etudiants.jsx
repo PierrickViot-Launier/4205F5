@@ -33,11 +33,11 @@ export default function Etudiants() {
 
       const etudiants = data.data.etudiants;
 
-      console.log(etudiants);
+      // console.log(etudiants);
 
       setLesEtudiants(etudiants);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   }
 
@@ -55,7 +55,7 @@ export default function Etudiants() {
         )
       );
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   }
 
@@ -66,7 +66,7 @@ export default function Etudiants() {
       const etudiant = data.data.etudiant;
       setType(etudiant.profil);
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   }
 
@@ -94,7 +94,7 @@ export default function Etudiants() {
               onClick={() => {
                 setOpen(true);
                 setEtudiantId(etudiant._id);
-                console.log(etudiant.profil);
+                // console.log(etudiant.profil);
                 getProfilEtudiant(etudiant._id);
               }}
             >

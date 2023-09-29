@@ -180,15 +180,11 @@ const getStagesByUserId = async (requete, reponse, next) => {
     );
   }
 
-  // console.log(etudiant);
-
-  // console.log(stages);
-
-  if (!stages || stages.length === 0) {
-    return next(
-      new HttpErreur("Aucun stage trouvé pour l'étudiant fourni", 404)
-    );
-  }
+  // if (!stagesPostule) {
+  //   return next(
+  //     new HttpErreur("Aucun stage trouvé pour l'étudiant fourni", 404)
+  //   );
+  // }
 
   reponse.json({ stages: stages });
 };
