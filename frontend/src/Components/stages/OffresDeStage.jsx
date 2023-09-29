@@ -40,7 +40,7 @@ export default function OffresDeStage() {
 
         setLesStages(stages);
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     }
   }
