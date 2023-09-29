@@ -12,25 +12,29 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { config } from "../../config";
+import SearchInput from "../Form/SearchInput";
 
 export default function StagesDisponibles() {
-  const [lesStages, setLesStages] = useState([]);
+  const [lesStagesAffiches, setLesStagesAffiches] = useState([]);
 
   const [open, setOpen] = useState(false);
-  
+
   const [openError, setOpenError] = useState(false);
 
   const [stageId, setStageId] = useState("");
 
   const auth = useContext(AuthContext);
 
+  const [searchIndex, setSearchIndex] = useState("");
+
   async function getStages() {
     try {
       const data = await axios.get(config.backend + "/api/stages/");
 
-      const stages = data.data.stages;
+      if (data != undefined) {
+        setLesStagesAffiches(data.data.stages);
+      }
 
-      setLesStages(stages);
     } catch (err) {
       // console.log(err);
     }
@@ -43,20 +47,18 @@ export default function StagesDisponibles() {
   return (
     <div className="flex justify-center mt-8 mb-8 text-justify">
       <div className="max-w-6xl text-center">
-      <h2 className="text-2xl font-bold mb-2">Liste des stages disponibles</h2>
+        <h2 className="text-2xl font-bold mb-2">Liste des stages disponibles</h2>
+        <SearchInput searchIndex={searchIndex} setSearchIndex={setSearchIndex}/>
         <ul className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2">
-          {lesStages
-            .filter((stage) => stage.etudiants.length < stage.nbPoste)
+          {lesStagesAffiches
+            .filter((stage) => { return (stage.etudiants.length < stage.nbPoste && (stage.description.includes(searchIndex) || stage.nomEntreprise.includes(searchIndex))) })
             .map((stage, index) => (
               <li
                 className="ml-4 mb-4"
                 key={index}
                 onClick={() => {
                   setOpen(true);
-
-                  
-                // console.log(auth.userId);
-
+                  // console.log(auth.userId);
                   setStageId(stage._id);
                 }}
               >
@@ -129,7 +131,7 @@ export default function StagesDisponibles() {
         </DialogContent>
 
         <DialogActions>
-          
+
           <Button onClick={() => setOpenError(false)}>OK</Button>
         </DialogActions>
       </Dialog>

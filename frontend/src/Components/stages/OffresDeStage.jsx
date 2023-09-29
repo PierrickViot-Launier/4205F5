@@ -11,13 +11,15 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { config } from "../../config";
+import SearchInput from "../Form/SearchInput";
 
 export default function OffresDeStage() {
-  const [lesStages, setLesStages] = useState([]);
+  const [lesStagesAffiches, setLesStagesAffiches] = useState([]);
   const [remuneration, setRemuneration] = useState("");
   const [nbPoste, setNbPoste] = useState("");
   const [open, setOpen] = useState(false);
   const [stageId, setStageId] = useState("");
+  const [searchIndex, setSearchIndex] = useState("");
 
   const auth = useContext(AuthContext);
 
@@ -28,8 +30,10 @@ export default function OffresDeStage() {
 
         const stages = data.data.stages;
 
-        setLesStages(stages);
-      } catch {}
+        setLesStagesAffiches(stages);
+      } catch {
+
+      }
     } else {
       try {
         const data = await axios.get(
@@ -38,7 +42,7 @@ export default function OffresDeStage() {
 
         const stages = data.data.stages;
 
-        setLesStages(stages);
+        setLesStagesAffiches(stages);
       } catch (err) {
         // console.log(err);
       }
@@ -67,9 +71,11 @@ export default function OffresDeStage() {
         <h2 className="text-2xl font-bold mb-5">
           Liste des offres de stage créées
         </h2>
-
+        <SearchInput searchIndex={searchIndex} setSearchIndex={setSearchIndex}/>
         <ul className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2">
-          {lesStages.map((stage, index) => (
+          {lesStagesAffiches
+            .filter((stage) => { return (stage.etudiants.length < stage.nbPoste && (stage.description.includes(searchIndex) || stage.nomEntreprise.includes(searchIndex))) })
+            .map((stage, index) => (
             <li
               className="ml-4 mb-4"
               key={index}
