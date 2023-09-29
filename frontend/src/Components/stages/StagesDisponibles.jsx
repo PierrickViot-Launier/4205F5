@@ -43,12 +43,6 @@ export default function StagesDisponibles() {
     getStages();
   }, []);
 
-  const handleSearchInputChange = (event) => { 
-    event.preventDefault();
-    let value = event.target.value;
-    setSearchIndex(value);
-  }
-
   return (
     <div className="flex justify-center mt-8 mb-8 text-justify">
       <div className="max-w-6xl text-center">
@@ -78,10 +72,13 @@ export default function StagesDisponibles() {
                     <span className="font-semibold">Courriel: </span>
                     {stage.courrielContact}
                   </h3>
-
                   <h3>
                     <span className="font-semibold">Adresse: </span>
                     {stage.adresseEntreprise}
+                  </h3>
+                  <h3>
+                    <span className="font-semibold">Type de stage: </span>
+                    {stage.type}
                   </h3>
                   <h3>
                     <span className="font-semibold">Postes disponibles: </span>
@@ -91,12 +88,11 @@ export default function StagesDisponibles() {
                     <span className="font-semibold">Description: </span>
                     {stage.description}
                   </h3>
-                </Card>
-              </li>
-            ))}
-        </ul>
+                    </Card>
+                  </li>
+                ))}
+            </ul>
       </div>
-
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>{"Inscription"}</DialogTitle>
 
