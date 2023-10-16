@@ -166,6 +166,8 @@ export default function OffresDeStage() {
               setOpen(false);
 
               try {
+                console.log("Spy: " + stageId);
+                
                 await axios.patch(
                   config.backend + "/api/stages/" + stageId,
                   {
@@ -173,12 +175,11 @@ export default function OffresDeStage() {
                     nbPoste,
                   }
                 );
-
+                
                 auth.modification(new Date().toLocaleString());
-              } catch (e) {
-                // console.log("22", e);
-              }
-
+              } catch (err) {
+                console.log(err);
+              }              
               getStages();
             }}
           >

@@ -117,16 +117,24 @@ const supprimerStage = async (requete, reponse, next) => {
 };
 
 const modifierStage = async (requete, reponse, next) => {
-  const { nbPoste, remuneration } = requete.body;
+  const champsModifies = requete.body;
   const stageId = requete.params.stageId;
 
   let stage;
 
   try {
     stage = await Stage.findById(stageId);
-    stage.nbPoste = nbPoste ? nbPoste : stage.nbPoste;
+    
+    if (!stage) {
+      console.log("DB: stage non trouve");
+    }
 
-    stage.remuneration = remuneration ? remuneration : stage.remuneration;
+    Object.keys(champsModifies).forEach(key => { 
+      if (stage.hasOwnProperty(key)) { 
+        stage[key] = champsModifies[key];
+      }
+    });
+
     await stage.save();
   } catch (err) {
     return next(new HttpErreur("Erreur lors de la mise à jour du stage", 500, err.message));
