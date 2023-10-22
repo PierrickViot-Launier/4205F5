@@ -123,19 +123,10 @@ const modifierStage = async (requete, reponse, next) => {
   let stage;
 
   try {
-    stage = await Stage.findById(stageId);
     
-    if (!stage) {
-      console.log("DB: stage non trouve");
-    }
-
-    Object.keys(champsModifies).forEach(key => { 
-      if (stage.hasOwnProperty(key)) { 
-        stage[key] = champsModifies[key];
-      }
-    });
-
+    stage = await Stage.findByIdAndUpdate(stageId, champsModifies, { new: true });
     await stage.save();
+    
   } catch (err) {
     return next(new HttpErreur("Erreur lors de la mise à jour du stage", 500, err.message));
   }
