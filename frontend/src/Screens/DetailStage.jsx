@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { config } from "../config";
+import Button from "../Components/Form/Button";
 
-
+import axios from "axios";
+import { AuthContext } from "../shared/context/auth-context";
+import { useContext } from "react";
 
 
 
@@ -10,6 +13,7 @@ export default function DetailStage() {
 
     const [stage, setStage] = useState(null);
 
+    const auth = useContext(AuthContext);
     const { stageId } = useParams();
 
 
@@ -29,6 +33,18 @@ export default function DetailStage() {
     }
 
 
+
+    async function buttonPostulerHandler() {
+        try {
+          await axios.patch(
+            config.backend + "/api/etudiants/postulation",
+            { etudiantId: auth.userId, stageId }
+          );
+        } catch (err) {
+            
+        }
+
+    }
 
     return (
         <>
@@ -83,6 +99,9 @@ export default function DetailStage() {
                             Chargement en cours...
                         </>)
                 }
+                <Button
+                    onClick={buttonPostulerHandler}
+                >Postuler</Button>
             </div>
         </>
     );
