@@ -119,11 +119,10 @@ const supprimerStage = async (requete, reponse, next) => {
 const modifierStage = async (requete, reponse, next) => {
   const champsModifies = requete.body;
   const stageId = requete.params.stageId;
-
+  
   let stage;
 
-  try {
-    
+  try {    
     stage = await Stage.findByIdAndUpdate(stageId, champsModifies, { new: true });
     await stage.save();
     
