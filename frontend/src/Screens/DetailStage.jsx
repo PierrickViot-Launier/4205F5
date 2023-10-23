@@ -7,6 +7,11 @@ import axios from "axios";
 import { AuthContext } from "../shared/context/auth-context";
 import { useContext } from "react";
 
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 
 export default function DetailStage() {
@@ -34,14 +39,60 @@ export default function DetailStage() {
 
 
 
+    const [dialogMessage, setDialogMessage] = useState("");
+    const [dialogTitle, setDialogTitle] = useState("");
+    const [okDialogOpen, setOkDialogOpen] = useState(false);
+    function showOkMessageDialog(message, title) {
+        setDialogMessage(message);
+        setDialogTitle(title);
+
+        setOkDialogOpen(true);
+    }
+
+
+
     async function buttonPostulerHandler() {
+        let response;
+
         try {
-          await axios.patch(
-            config.backend + "/api/etudiants/postulation",
-            { etudiantId: auth.userId, stageId }
-          );
+            //   await axios.patch(
+            //     config.backend + "/api/etudiants/postulation",
+            //     { etudiantId: auth.userId, stageId }
+            //   );
+
+            response = await fetch(config.backend + "/api/etudiants/postulation", {
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                method: "PATCH",
+                body: JSON.stringify({
+                    etudiantId: auth.userId,
+                    stageId
+                })
+            });
+
+            const responseJson = await response.json();
+
+            if (responseJson.erreur) {
+                showOkMessageDialog(responseJson.message, "Erreur pendant la postulation");
+            }
+            else {
+                showOkMessageDialog("Postulation envoyé", "confirmation");
+            }
+
         } catch (err) {
-            
+            let errorMessage = err.message;
+
+            try {
+                const responseJson = await response.json();
+                if (responseJson.erreur) {
+                    errorMessage += "\n" + responseJson.message;
+                }
+            }
+            catch (err2) {
+
+            }
+            showOkMessageDialog("Erreur pendant la postulation : " + err.message, "Erreur pendant la postulation");
         }
 
     }
@@ -102,6 +153,24 @@ export default function DetailStage() {
                 <Button
                     onClick={buttonPostulerHandler}
                 >Postuler</Button>
+
+                <Dialog open={okDialogOpen} onClose={null}>
+                    <DialogTitle>{dialogTitle}</DialogTitle>
+
+                    <DialogContent>
+                        <DialogContentText>
+                            {dialogMessage}
+                        </DialogContentText>
+                    </DialogContent>
+
+                    <DialogActions>
+                        <Button
+                            onClick={() => { setOkDialogOpen(false); }}
+                        >
+                            Ok
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </div>
         </>
     );
