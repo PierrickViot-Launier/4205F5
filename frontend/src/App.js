@@ -15,7 +15,6 @@ import StagesDisponibles from "./Components/stages/StagesDisponibles";
 import OffresDeStage from "./Components/stages/OffresDeStage";
 import Etudiants from "./Components/etudiants/Etudiants";
 import ModifierProfilScreen from "./Screens/ModifierProfilScreen";
-
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userId, setUserId] = useState(null);
@@ -75,12 +74,11 @@ function App() {
           <MainNavigation />
           <main>
             <Routes>
+            
               <Route path="/" element={<AccueilScreen />} />
-
               <Route path="/FAQ" element={<FAQScreen />} />
-
               <Route path="/Profils" element={<ProfilsCompetencesScreen />} />
-
+              
               <Route
                 path="/Deroulement"
                 element={<DeroulementStagiaireScreen />}

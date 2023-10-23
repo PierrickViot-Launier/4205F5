@@ -9,7 +9,12 @@ const etudiantSchema = new Schema({
   motDePasse: { type: String, required: true },
   telephone: { type: String, required: true },
   adresse: { type: String, required: true },
-  stagesPostule: [{ type: mongoose.Types.ObjectId, ref: "Stage" }],
+  stagesPostule: [
+    {
+      stagePostule: { type: mongoose.Types.ObjectId, ref: "Stage" },
+      date: { type: String },
+    },
+  ],
   stage: { type: mongoose.Types.ObjectId, ref: "Stage" },
 });
 

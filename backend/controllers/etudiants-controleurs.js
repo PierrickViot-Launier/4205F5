@@ -84,7 +84,7 @@ const modificationProfil = async (requete, reponse, next) => {
 const getEtudiants = async (requete, reponse, next) => {
   let etudiants;
   try {
-    etudiants = await Etudiant.find().populate("stagesPostule stage");
+    etudiants = await Etudiant.find().populate("stagesPostule.stagePostule stage");
   } catch (err) {
     return next(
       new HttpErreur("Erreur lors de la récupération des étudiants", 500, err.message)
@@ -140,7 +140,7 @@ const postulationStage = async (requete, reponse, next) => {
 
   // console.log(etudiant);
   for (i = 0; i < etudiant.stagesPostule.length; i++) {
-    if (etudiant.stagesPostule[i]._id == stageId) {
+    if (etudiant.stagesPostule[i].stagePostule._id == stageId) {
       dejaPostule = true;
     }
   }
@@ -151,7 +151,7 @@ const postulationStage = async (requete, reponse, next) => {
 
   try {
     // console.log(stage);
-    etudiant.stagesPostule.push(stage);
+    etudiant.stagesPostule.push({stagePostule: stage, date:  new Date().toLocaleDateString()});
     await etudiant.save();
 
     stage.etudiants.push(etudiant);
@@ -171,7 +171,7 @@ const getStagesByUserId = async (requete, reponse, next) => {
   let stages;
 
   try {
-    etudiant = await Etudiant.findById(etudiantId).populate("stagesPostule");
+    etudiant = await Etudiant.findById(etudiantId).populate("stagesPostule.stagePostule");
 
     stages = etudiant.stagesPostule;
   } catch (err) {
@@ -185,6 +185,8 @@ const getStagesByUserId = async (requete, reponse, next) => {
   //     new HttpErreur("Aucun stage trouvé pour l'étudiant fourni", 404)
   //   );
   // }
+
+  console.log(stages)
 
   reponse.json({ stages: stages });
 };

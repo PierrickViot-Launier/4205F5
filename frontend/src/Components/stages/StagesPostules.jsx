@@ -5,15 +5,15 @@ import Card from "../../shared/Card";
 import { useState } from "react";
 import { AuthContext } from "../../shared/context/auth-context";
 import { config } from "../../config";
-
+import EtudiantsCandidats from "../etudiants/EtudiantsCandidats"
 export default function StagesPostules() {
-  const [lesStages, setLesStages] = useState([]);
+  const [lesStages, setLesStages] = useState([[]]);
 
   const auth = useContext(AuthContext);
 
   async function getStages() {
     try {
-      const data = await axios.get(
+      const data =  await axios.get(
         config.backend + "/api/etudiants/" + auth.userId + "/stages/"
       );
 
@@ -23,7 +23,8 @@ export default function StagesPostules() {
 
       // console.log(stages);
 
-      setLesStages(stages);
+
+      setLesStages(stages.map(stage => (stage.stagePostule)));
     } catch (err) {
       // console.log(err);
     }
