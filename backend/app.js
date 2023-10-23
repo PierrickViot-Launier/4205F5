@@ -41,6 +41,7 @@ app.use((error, requete, reponse, next) => {
   }
   reponse.status(error.code || 500);
   reponse.json({
+    erreur: true,
     message: error.message || "Une erreur inconnue est survenue",
   });
 });

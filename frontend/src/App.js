@@ -15,6 +15,7 @@ import StagesDisponibles from "./Components/stages/StagesDisponibles";
 import OffresDeStage from "./Components/stages/OffresDeStage";
 import Etudiants from "./Components/etudiants/Etudiants";
 import ModifierProfilScreen from "./Screens/ModifierProfilScreen";
+import DetailStage from "./Screens/DetailStage";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -84,6 +85,11 @@ function App() {
               <Route
                 path="/Deroulement"
                 element={<DeroulementStagiaireScreen />}
+              />
+
+              <Route
+                path="/DetailStage/:stageId"
+                element={<DetailStage />}
               />
 
               {isLoggedIn && isEmployeur && (

@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Card from "../../shared/Card";
 import { useState } from "react";
 import { AuthContext } from "../../shared/context/auth-context";
+import { NavLink } from "react-router-dom";
 
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -56,37 +57,40 @@ export default function StagesDisponibles() {
               <li
                 className="ml-4 mb-4"
                 key={index}
-                onClick={() => {
-                  setOpen(true);
-                  // console.log(auth.userId);
-                  setStageId(stage._id);
-                }}
+                // onClick={() => {
+                //   setOpen(true);
+                //   // console.log(auth.userId);
+                //   setStageId(stage._id);
+                // }}
               >
-                <Card className="text-center max-w-xl rounded overflow-hidden shadow-lg flex flex-col bg-white hover:bg-gray">
-                  <h3>{stage.nomEntreprise}</h3>
-                  <h3>
-                    {" "}
-                    <span className="font-semibold">Personne contact: </span>
-                    {stage.nomContact}
-                  </h3>
-                  <h3>
-                    <span className="font-semibold">Courriel: </span>
-                    {stage.courrielContact}
-                  </h3>
+                <NavLink to={"/DetailStage/" + stage._id}>
+                  <Card className="text-center max-w-xl rounded overflow-hidden shadow-lg flex flex-col bg-white hover:bg-gray">
+                    <h3>{stage.nomEntreprise}</h3>
+                    <h3>
+                      {" "}
+                      <span className="font-semibold">Personne contact: </span>
+                      {stage.nomContact}
+                    </h3>
+                    <h3>
+                      <span className="font-semibold">Courriel: </span>
+                      {stage.courrielContact}
+                    </h3>
 
-                  <h3>
-                    <span className="font-semibold">Adresse: </span>
-                    {stage.adresseEntreprise}
-                  </h3>
-                  <h3>
-                    <span className="font-semibold">Postes disponibles: </span>
-                    {stage.nbPoste}
-                  </h3>
-                  <h3>
-                    <span className="font-semibold">Description: </span>
-                    {stage.description}
-                  </h3>
-                </Card>
+                    <h3>
+                      <span className="font-semibold">Adresse: </span>
+                      {stage.adresseEntreprise}
+                    </h3>
+                    <h3>
+                      <span className="font-semibold">Postes disponibles: </span>
+                      {stage.nbPoste}
+                    </h3>
+                    <h3>
+                      <span className="font-semibold">Description: </span>
+                      {stage.description}
+                    </h3>
+                  </Card>
+
+                </NavLink>
               </li>
             ))}
         </ul>
