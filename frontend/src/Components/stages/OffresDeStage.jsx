@@ -15,10 +15,10 @@ import SearchInput from "../Form/SearchInput";
 
 export default function OffresDeStage() {
   const [lesStagesAffiches, setLesStagesAffiches] = useState([]);
-  const [remuneration, setRemuneration] = useState("");
-  const [nbPoste, setNbPoste] = useState("");
   const [open, setOpen] = useState(false);
-  const [stageId, setStageId] = useState("");
+  const [stageSelected, setStageSelected] = useState({
+
+  });
   const [searchIndex, setSearchIndex] = useState("");
 
   const auth = useContext(AuthContext);
@@ -31,9 +31,10 @@ export default function OffresDeStage() {
         const stages = data.data.stages;
 
         setLesStagesAffiches(stages);
-      } catch {
-
+      } catch (err) {
+        console.error("[ERROR_BD]:" + err);
       }
+
     } else {
       try {
         const data = await axios.get(
@@ -44,21 +45,13 @@ export default function OffresDeStage() {
 
         setLesStagesAffiches(stages);
       } catch (err) {
-        // console.log(err);
+        console.error("[ERROR_BD]:" + err);
       }
     }
-  }
+  } 
 
-  function remunerationHandler(event) {
-    setRemuneration(event.target.value);
-
-    // console.log(event.target.value);
-  }
-
-  function nbPosteHandler(event) {
-    setNbPoste(event.target.value);
-
-    // console.log(event.target.value);
+  const genericModiferStageHandler = (event) => {
+    setStageSelected({...stageSelected, [event.target.id]: event.target.value})
   }
 
   useEffect(() => {
@@ -81,7 +74,7 @@ export default function OffresDeStage() {
               key={index}
               onClick={() => {
                 setOpen(true);
-                setStageId(stage._id);
+                setStageSelected(stage);
               }}
             >
               <Card className="text-center max-w-xl rounded overflow-hidden shadow-lg flex flex-col bg-white hover:bg-gray">
@@ -122,23 +115,79 @@ export default function OffresDeStage() {
         <DialogTitle>{"Modifier ou supprimer le stage"}</DialogTitle>
 
         <DialogContent>
-          <div>
-            <TextField
-              autoFocus
-              id="remuneration"
-              type="text"
-              margin="dense"
-              label="Remuneration"
-              onChange={remunerationHandler}
-            />
-          </div>
-
+          <TextField
+            autoFocus
+            id="nomContact"
+            type="text"
+            margin="dense"
+            label="Nom de contact"
+            defaultValue={stageSelected.nomContact}
+            onChange={genericModiferStageHandler}
+          />
+          <br/>
+          <TextField
+            autoFocus
+            id="courrielContact"
+            type="text"
+            margin="dense"
+            label="Courriel de Contact"
+            defaultValue={stageSelected.courrielContact}
+            onChange={genericModiferStageHandler}
+          /><br/>
+          <TextField
+            autoFocus
+            id="numeroContact"
+            type="text"
+            margin="dense"
+            label="Numero de contact"
+            defaultValue={stageSelected.numeroContact}
+            onChange={genericModiferStageHandler}
+          /><br/>
+          <TextField
+            autoFocus
+            id="nomEntreprise"
+            type="text"
+            margin="dense"
+            label="Nom de l'entreprise"
+            defaultValue={stageSelected.nomEntreprise}
+            onChange={genericModiferStageHandler}
+          /><br/>
+          <TextField
+            autoFocus
+            id="adresseEntreprise"
+            type="text"
+            margin="dense"
+            label="Adresse de l'entreprise"
+            defaultValue={stageSelected.adresseEntreprise}
+            onChange={genericModiferStageHandler}
+          /><br/>
+          <TextField
+            autoFocus
+            id="description"
+            type="text"
+            margin="dense"
+            label="description"
+            defaultValue={stageSelected.description}
+            onChange={genericModiferStageHandler}
+          />
+          <br/>
+          <TextField
+            autoFocus
+            id="remuneration"
+            type="text"
+            margin="dense"
+            label="Remuneration"
+            defaultValue={stageSelected.remuneration}
+            onChange={genericModiferStageHandler}
+          />
+          <br/>
           <TextField
             id="nbPoste"
             type="text"
             margin="dense"
             label="Nombre de postes"
-            onChange={nbPosteHandler}
+            defaultValue={stageSelected.nbPoste}
+            onChange={genericModiferStageHandler}
           />
         </DialogContent>
 
@@ -149,8 +198,8 @@ export default function OffresDeStage() {
 
               try {
                 await axios.delete(
-                  config.backend + "/api/stages/" + stageId,
-                  { etudiantId: auth.userId, stageId }
+                  config.backend + "/api/stages/" + stageSelected._id,
+                  { etudiantId: auth.userId, stageId:stageSelected._id }
                 );
 
                 auth.modification(new Date().toLocaleString());
@@ -164,16 +213,9 @@ export default function OffresDeStage() {
           <Button
             onClick={async () => {
               setOpen(false);
-
               try {
-                console.log("Spy: " + stageId);
-                
                 await axios.patch(
-                  config.backend + "/api/stages/" + stageId,
-                  {
-                    remuneration,
-                    nbPoste,
-                  }
+                  config.backend + "/api/stages/" + stageSelected._id, stageSelected
                 );
                 
                 auth.modification(new Date().toLocaleString());
