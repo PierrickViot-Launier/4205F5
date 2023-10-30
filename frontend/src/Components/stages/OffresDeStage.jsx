@@ -12,14 +12,17 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { config } from "../../config";
 import SearchInput from "../Form/SearchInput";
-import { Box } from "@mui/material";
 
 export default function OffresDeStage() {
+  
   const [lesStagesAffiches, setLesStagesAffiches] = useState([]);
   const [open, setOpen] = useState(false);
   const [stageSelected, setStageSelected] = useState({
   
   });
+
+  const [dialogTitle, setDialogTitle] = useState("");
+
   
   const [searchIndex, setSearchIndex] = useState("");
 
@@ -53,12 +56,46 @@ export default function OffresDeStage() {
   }
 
   const genericModiferStageHandler = (event) => {
-    setStageSelected({ ...stageSelected, [event.target.id]: event.target.value })
+    setStageSelected({ ...stageSelected, [event.target.id]: event.target.value });
+    console.log(event.target.id);
+  }
+
+
+  // A voir si on remet les methodes en haut.
+  const modifierStageHandler = async () => {
+      setOpen(false);
+      try {
+
+        if (stageSelected.courrielContact.match(/.+@.+\..+/g)) {
+          console.log('email is correcte');
+
+          await axios.patch(
+            config.backend + "/api/stages/" + stageSelected._id, stageSelected
+          );
+
+          auth.modification(new Date().toLocaleString());
+        } else {
+          setDialogTitle("Adresse courriel invalide")
+
+          setOpen(true);
+        }
+
+        
+      } catch (err) {
+        console.log(err);
+      }
+      getStages();
+  }
+
+  const supprimerStageHandler = () => { 
+
   }
 
   useEffect(() => {
     getStages();
   }, []);
+
+
 
   return (
     <div className="flex justify-center mt-8 mb-8 text-justify">
@@ -75,6 +112,7 @@ export default function OffresDeStage() {
                 className="ml-4 mb-4"
                 key={index}
                 onClick={() => {
+                  setDialogTitle("Modifier ou supprimer le stage");
                   setOpen(true);
                   setStageSelected(stage);
                 }}
@@ -114,7 +152,7 @@ export default function OffresDeStage() {
       </div>
 
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>{"Modifier ou supprimer le stage"}</DialogTitle>
+        <DialogTitle>{dialogTitle}</DialogTitle>
 
         <DialogContent
           sx={{
@@ -123,6 +161,7 @@ export default function OffresDeStage() {
           }}
           >
             <TextField
+
               autoFocus
               id="nomContact"
               type="text"
@@ -229,22 +268,11 @@ export default function OffresDeStage() {
             Supprimer
           </Button>
           <Button
-            onClick={async () => {
-              setOpen(false);
-              try {
-                await axios.patch(
-                  config.backend + "/api/stages/" + stageSelected._id, stageSelected
-                );
-
-                auth.modification(new Date().toLocaleString());
-              } catch (err) {
-                console.log(err);
-              }
-              getStages();
-            }}
+            onClick={modifierStageHandler}
           >
             Modifier
           </Button>
+          
         </DialogActions>
       </Dialog>
     </div>
