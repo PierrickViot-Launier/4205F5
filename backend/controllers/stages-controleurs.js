@@ -117,17 +117,15 @@ const supprimerStage = async (requete, reponse, next) => {
 };
 
 const modifierStage = async (requete, reponse, next) => {
-  const { nbPoste, remuneration } = requete.body;
+  const champsModifies = requete.body;
   const stageId = requete.params.stageId;
-
+  
   let stage;
 
-  try {
-    stage = await Stage.findById(stageId);
-    stage.nbPoste = nbPoste ? nbPoste : stage.nbPoste;
-
-    stage.remuneration = remuneration ? remuneration : stage.remuneration;
+  try {    
+    stage = await Stage.findByIdAndUpdate(stageId, champsModifies, { new: true });
     await stage.save();
+    
   } catch (err) {
     return next(new HttpErreur("Erreur lors de la mise à jour du stage", 500, err.message));
   }

@@ -14,11 +14,16 @@ import { config } from "../../config";
 import SearchInput from "../Form/SearchInput";
 
 export default function OffresDeStage() {
+  
   const [lesStagesAffiches, setLesStagesAffiches] = useState([]);
-  const [remuneration, setRemuneration] = useState("");
-  const [nbPoste, setNbPoste] = useState("");
   const [open, setOpen] = useState(false);
-  const [stageId, setStageId] = useState("");
+  const [stageSelected, setStageSelected] = useState({
+  
+  });
+
+  const [dialogTitle, setDialogTitle] = useState("");
+
+  
   const [searchIndex, setSearchIndex] = useState("");
 
   const auth = useContext(AuthContext);
@@ -31,9 +36,10 @@ export default function OffresDeStage() {
         const stages = data.data.stages;
 
         setLesStagesAffiches(stages);
-      } catch {
-
+      } catch (err) {
+        console.error("[ERROR_BD]:" + err);
       }
+
     } else {
       try {
         const data = await axios.get(
@@ -44,26 +50,52 @@ export default function OffresDeStage() {
 
         setLesStagesAffiches(stages);
       } catch (err) {
-        // console.log(err);
+        console.error("[ERROR_BD]:" + err);
       }
     }
   }
 
-  function remunerationHandler(event) {
-    setRemuneration(event.target.value);
-
-    // console.log(event.target.value);
+  const genericModiferStageHandler = (event) => {
+    setStageSelected({ ...stageSelected, [event.target.id]: event.target.value });
+    console.log(event.target.id);
   }
 
-  function nbPosteHandler(event) {
-    setNbPoste(event.target.value);
 
-    // console.log(event.target.value);
+  // A voir si on remet les methodes en haut.
+  const modifierStageHandler = async () => {
+      setOpen(false);
+      try {
+
+        if (stageSelected.courrielContact.match(/.+@.+\..+/g)) {
+          console.log('email is correcte');
+
+          await axios.patch(
+            config.backend + "/api/stages/" + stageSelected._id, stageSelected
+          );
+
+          auth.modification(new Date().toLocaleString());
+        } else {
+          setDialogTitle("Adresse courriel invalide")
+
+          setOpen(true);
+        }
+
+        
+      } catch (err) {
+        console.log(err);
+      }
+      getStages();
+  }
+
+  const supprimerStageHandler = () => { 
+
   }
 
   useEffect(() => {
     getStages();
   }, []);
+
+
 
   return (
     <div className="flex justify-center mt-8 mb-8 text-justify">
@@ -71,75 +103,149 @@ export default function OffresDeStage() {
         <h2 className="text-2xl font-bold mb-5">
           Liste des offres de stage créées
         </h2>
-        <SearchInput searchIndex={searchIndex} setSearchIndex={setSearchIndex}/>
+        <SearchInput searchIndex={searchIndex} setSearchIndex={setSearchIndex} />
         <ul className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2">
           {lesStagesAffiches
             .filter((stage) => { return (stage.etudiants.length < stage.nbPoste && (stage.description.includes(searchIndex) || stage.nomEntreprise.includes(searchIndex))) })
             .map((stage, index) => (
-            <li
-              className="ml-4 mb-4"
-              key={index}
-              onClick={() => {
-                setOpen(true);
-                setStageId(stage._id);
-              }}
-            >
-              <Card className="text-center max-w-xl rounded overflow-hidden shadow-lg flex flex-col bg-white hover:bg-gray">
-                <h3>{stage.nomEntreprise}</h3>
+              <li
+                className="ml-4 mb-4"
+                key={index}
+                onClick={() => {
+                  setDialogTitle("Modifier ou supprimer le stage");
+                  setOpen(true);
+                  setStageSelected(stage);
+                }}
+              >
+                <Card className="text-center max-w-xl rounded overflow-hidden shadow-lg flex flex-col bg-white hover:bg-gray">
+                  <h3>{stage.nomEntreprise}</h3>
 
-                <h3>
-                  {" "}
-                  <span className="font-semibold">Personne contact: </span>
-                  {stage.nomContact}
-                </h3>
+                  <h3>
+                    {" "}
+                    <span className="font-semibold">Personne contact: </span>
+                    {stage.nomContact}
+                  </h3>
 
-                <h3>
-                  <span className="font-semibold">Courriel: </span>
-                  {stage.courrielContact}
-                </h3>
+                  <h3>
+                    <span className="font-semibold">Courriel: </span>
+                    {stage.courrielContact}
+                  </h3>
 
-                <h3>
-                  <span className="font-semibold">Adresse: </span>
-                  {stage.adresseEntreprise}
-                </h3>
+                  <h3>
+                    <span className="font-semibold">Adresse: </span>
+                    {stage.adresseEntreprise}
+                  </h3>
 
-                <h3>
-                  <span className="font-semibold">Postes disponibles: </span>
-                  {stage.nbPoste}
-                </h3>
+                  <h3>
+                    <span className="font-semibold">Postes disponibles: </span>
+                    {stage.nbPoste}
+                  </h3>
 
-                <h3>
-                  <span className="font-semibold">Description: </span>
-                  {stage.description}
-                </h3>
-              </Card>
-            </li>
-          ))}
+                  <h3>
+                    <span className="font-semibold">Description: </span>
+                    {stage.description}
+                  </h3>
+                </Card>
+              </li>
+            ))}
         </ul>
       </div>
 
       <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>{"Modifier ou supprimer le stage"}</DialogTitle>
+        <DialogTitle>{dialogTitle}</DialogTitle>
 
-        <DialogContent>
-          <div>
+        <DialogContent
+          sx={{
+            width:500,
+            maxWidth:'100%'
+          }}
+          >
+            <TextField
+
+              autoFocus
+              id="nomContact"
+              type="text"
+              margin="dense"
+              label="Nom de contact"
+              fullWidth
+              defaultValue={stageSelected.nomContact}
+              onChange={genericModiferStageHandler}
+            />
+            <br />
+            <TextField
+              autoFocus
+              id="courrielContact"
+              type="text"
+              margin="dense"
+              label="Courriel de Contact"
+              inputProps={{ inputMode: 'email', pattern: '[0-9]*' }}
+              fullWidth
+              defaultValue={stageSelected.courrielContact}
+              onChange={genericModiferStageHandler}
+            /><br />
+            <TextField
+              autoFocus
+              id="numeroContact"
+              type="text"
+              margin="dense"
+              label="Numero de contact"
+              fullWidth
+              defaultValue={stageSelected.numeroContact}
+              onChange={genericModiferStageHandler}
+            /><br />
+            <TextField
+              autoFocus
+              id="nomEntreprise"
+              type="text"
+              margin="dense"
+              label="Nom de l'entreprise"
+              fullWidth
+              defaultValue={stageSelected.nomEntreprise}
+              onChange={genericModiferStageHandler}
+            /><br />
+            <TextField
+              autoFocus
+              id="adresseEntreprise"
+              type="text"
+              margin="dense"
+              label="Adresse de l'entreprise"
+              fullWidth
+              defaultValue={stageSelected.adresseEntreprise}
+              onChange={genericModiferStageHandler}
+            /><br />
+            <TextField
+              autoFocus
+              id="description"
+              type="text"
+              margin="dense"
+              label="description"
+              multiline
+              maxRows={3}
+              fullWidth
+              defaultValue={stageSelected.description}
+              onChange={genericModiferStageHandler}
+            />
+            <br />
             <TextField
               autoFocus
               id="remuneration"
               type="text"
               margin="dense"
               label="Remuneration"
-              onChange={remunerationHandler}
+              fullWidth
+              defaultValue={stageSelected.remuneration}
+              onChange={genericModiferStageHandler}
             />
-          </div>
-
-          <TextField
-            id="nbPoste"
-            type="text"
-            margin="dense"
-            label="Nombre de postes"
-            onChange={nbPosteHandler}
-          />
+            <br />
+            <TextField
+              id="nbPoste"
+              type="text"
+              margin="dense"
+              label="Nombre de postes"
+              fullWidth
+              defaultValue={stageSelected.nbPoste}
+              onChange={genericModiferStageHandler}
+            />
         </DialogContent>
 
         <DialogActions>
@@ -149,12 +255,12 @@ export default function OffresDeStage() {
 
               try {
                 await axios.delete(
-                  config.backend + "/api/stages/" + stageId,
-                  { etudiantId: auth.userId, stageId }
+                  config.backend + "/api/stages/" + stageSelected._id,
+                  { etudiantId: auth.userId, stageId: stageSelected._id }
                 );
 
                 auth.modification(new Date().toLocaleString());
-              } catch (err) {}
+              } catch (err) { }
 
               await getStages();
             }}
@@ -162,28 +268,11 @@ export default function OffresDeStage() {
             Supprimer
           </Button>
           <Button
-            onClick={async () => {
-              setOpen(false);
-
-              try {
-                await axios.patch(
-                  config.backend + "/api/stages/" + stageId,
-                  {
-                    remuneration,
-                    nbPoste,
-                  }
-                );
-
-                auth.modification(new Date().toLocaleString());
-              } catch (e) {
-                // console.log("22", e);
-              }
-
-              getStages();
-            }}
+            onClick={modifierStageHandler}
           >
             Modifier
           </Button>
+          
         </DialogActions>
       </Dialog>
     </div>
