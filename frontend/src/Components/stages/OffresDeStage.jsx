@@ -12,21 +12,13 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { config } from "../../config";
 import SearchInput from "../Form/SearchInput";
-
+import { useNavigate } from "react-router-dom";
 export default function OffresDeStage() {
   
+  const navigate = useNavigate();
   const [lesStagesAffiches, setLesStagesAffiches] = useState([]);
-  const [open, setOpen] = useState(false);
-  const [stageSelected, setStageSelected] = useState({
-  
-  });
-
-  const [dialogTitle, setDialogTitle] = useState("");
-
-  
-  const [searchIndex, setSearchIndex] = useState("");
-
-  const auth = useContext(AuthContext);
+ const [searchIndex, setSearchIndex] = useState("");
+ const auth = useContext(AuthContext);
 
   async function getStages() {
     if (auth.isCordonnateur) {
@@ -55,43 +47,7 @@ export default function OffresDeStage() {
     }
   }
 
-  const genericModiferStageHandler = (event) => {
-    setStageSelected({ ...stageSelected, [event.target.id]: event.target.value });
-    console.log(event.target.id);
-  }
-
-
-  // A voir si on remet les methodes en haut.
-  const modifierStageHandler = async () => {
-      setOpen(false);
-      try {
-
-        if (stageSelected.courrielContact.match(/.+@.+\..+/g)) {
-          console.log('email is correcte');
-
-          await axios.patch(
-            config.backend + "/api/stages/" + stageSelected._id, stageSelected
-          );
-
-          auth.modification(new Date().toLocaleString());
-        } else {
-          setDialogTitle("Adresse courriel invalide")
-
-          setOpen(true);
-        }
-
-        
-      } catch (err) {
-        console.log(err);
-      }
-      getStages();
-  }
-
-  const supprimerStageHandler = () => { 
-
-  }
-
-  useEffect(() => {
+useEffect(() => {
     getStages();
   }, []);
 
@@ -112,9 +68,11 @@ export default function OffresDeStage() {
                 className="ml-4 mb-4"
                 key={index}
                 onClick={() => {
-                  setDialogTitle("Modifier ou supprimer le stage");
+                  /*setDialogTitle("Modifier ou supprimer le stage");
                   setOpen(true);
                   setStageSelected(stage);
+                  */
+                 navigate("/DetailStage/"+stage.id);
                 }}
               >
                 <Card className="text-center max-w-xl rounded overflow-hidden shadow-lg flex flex-col bg-white hover:bg-gray">
@@ -151,130 +109,7 @@ export default function OffresDeStage() {
         </ul>
       </div>
 
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>{dialogTitle}</DialogTitle>
-
-        <DialogContent
-          sx={{
-            width:500,
-            maxWidth:'100%'
-          }}
-          >
-            <TextField
-
-              autoFocus
-              id="nomContact"
-              type="text"
-              margin="dense"
-              label="Nom de contact"
-              fullWidth
-              defaultValue={stageSelected.nomContact}
-              onChange={genericModiferStageHandler}
-            />
-            <br />
-            <TextField
-              autoFocus
-              id="courrielContact"
-              type="text"
-              margin="dense"
-              label="Courriel de Contact"
-              inputProps={{ inputMode: 'email', pattern: '[0-9]*' }}
-              fullWidth
-              defaultValue={stageSelected.courrielContact}
-              onChange={genericModiferStageHandler}
-            /><br />
-            <TextField
-              autoFocus
-              id="numeroContact"
-              type="text"
-              margin="dense"
-              label="Numero de contact"
-              fullWidth
-              defaultValue={stageSelected.numeroContact}
-              onChange={genericModiferStageHandler}
-            /><br />
-            <TextField
-              autoFocus
-              id="nomEntreprise"
-              type="text"
-              margin="dense"
-              label="Nom de l'entreprise"
-              fullWidth
-              defaultValue={stageSelected.nomEntreprise}
-              onChange={genericModiferStageHandler}
-            /><br />
-            <TextField
-              autoFocus
-              id="adresseEntreprise"
-              type="text"
-              margin="dense"
-              label="Adresse de l'entreprise"
-              fullWidth
-              defaultValue={stageSelected.adresseEntreprise}
-              onChange={genericModiferStageHandler}
-            /><br />
-            <TextField
-              autoFocus
-              id="description"
-              type="text"
-              margin="dense"
-              label="description"
-              multiline
-              maxRows={3}
-              fullWidth
-              defaultValue={stageSelected.description}
-              onChange={genericModiferStageHandler}
-            />
-            <br />
-            <TextField
-              autoFocus
-              id="remuneration"
-              type="text"
-              margin="dense"
-              label="Remuneration"
-              fullWidth
-              defaultValue={stageSelected.remuneration}
-              onChange={genericModiferStageHandler}
-            />
-            <br />
-            <TextField
-              id="nbPoste"
-              type="text"
-              margin="dense"
-              label="Nombre de postes"
-              fullWidth
-              defaultValue={stageSelected.nbPoste}
-              onChange={genericModiferStageHandler}
-            />
-        </DialogContent>
-
-        <DialogActions>
-          <Button
-            onClick={async () => {
-              setOpen(false);
-
-              try {
-                await axios.delete(
-                  config.backend + "/api/stages/" + stageSelected._id,
-                  { etudiantId: auth.userId, stageId: stageSelected._id }
-                );
-
-                auth.modification(new Date().toLocaleString());
-              } catch (err) { }
-
-              await getStages();
-            }}
-          >
-            Supprimer
-          </Button>
-          <Button
-            onClick={modifierStageHandler}
-          >
-            Modifier
-          </Button>
-          
-        </DialogActions>
-      </Dialog>
+      
     </div>
   );
 }

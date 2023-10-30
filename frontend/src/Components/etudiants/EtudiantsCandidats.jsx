@@ -41,7 +41,7 @@ export default function EtudiantsCandidats({stage}) {
           Liste des candidats
         </h2>
 
-        <ul className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2">
+        <ul className="inline grid grid-cols-1 ">
           
           
           {lesEtudiants.map((etudiant, index) => (
@@ -54,7 +54,7 @@ export default function EtudiantsCandidats({stage}) {
                 ;
               }}
             >
-              <Card className="text-center max-w-xl rounded overflow-hidden shadow-lg flex flex-col bg-white hover:bg-gray">
+              <Card className="text-center max-w-xl rounded overflow-hidden shadow-lg flex flex-row bg-white hover:bg-gray">
               <h3>{etudiant.nom}</h3>
 
               <h3>

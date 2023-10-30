@@ -13,170 +13,297 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
+import TextField from "@mui/material/TextField";
+
+import EtudiantsCandidats from "../Components/etudiants/EtudiantsCandidats";
 
 export default function DetailStage() {
+  const [stage, setStage] = useState(null);
 
-    const [stage, setStage] = useState(null);
+  const auth = useContext(AuthContext);
+  const { stageId } = useParams();
 
-    const auth = useContext(AuthContext);
-    const { stageId } = useParams();
+  if (!stage) {
+    (async () => {
+      const response = await fetch(config.backend + "/api/stages/" + stageId, {
+        method: "GET",
+      });
 
+      const responseJson = await response.json();
 
-    if (!stage) {
-        (async () => {
-            const response = await fetch(
-                config.backend + "/api/stages/" + stageId,
-                {
-                    method: "GET",
-                }
-            );
+      setStage(responseJson.stage);
+    })();
+  }
 
-            const responseJson = await response.json();
+  const [open, setOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
+  const [dialogTitle, setDialogTitle] = useState("");
+  const [okDialogOpen, setOkDialogOpen] = useState(false);
+  function showOkMessageDialog(message, title) {
+    setDialogMessage(message);
+    setDialogTitle(title);
 
-            setStage(responseJson.stage);
-        })();
+    setOkDialogOpen(true);
+  }
+
+  // A voir si on remet les methodes en haut.
+  const modifierStageHandler = async () => {
+    setOpen(false);
+    try {
+      if (stage.courrielContact.match(/.+@.+\..+/g)) {
+        console.log("email is correcte");
+
+        await axios.patch(config.backend + "/api/stages/" + stage._id, stage);
+
+        auth.modification(new Date().toLocaleString());
+      } else {
+        setDialogTitle("Adresse courriel invalide");
+
+        setOpen(true);
+      }
+    } catch (err) {
+      console.log(err);
     }
+  };
 
+  const supprimerStageHandler = () => {};
 
+  async function buttonPostulerHandler() {
+    let response;
 
-    const [dialogMessage, setDialogMessage] = useState("");
-    const [dialogTitle, setDialogTitle] = useState("");
-    const [okDialogOpen, setOkDialogOpen] = useState(false);
-    function showOkMessageDialog(message, title) {
-        setDialogMessage(message);
-        setDialogTitle(title);
+    try {
+      //   await axios.patch(
+      //     config.backend + "/api/etudiants/postulation",
+      //     { etudiantId: auth.userId, stageId }
+      //   );
 
-        setOkDialogOpen(true);
-    }
+      response = await fetch(config.backend + "/api/etudiants/postulation", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "PATCH",
+        body: JSON.stringify({
+          etudiantId: auth.userId,
+          stageId,
+        }),
+      });
 
+      const responseJson = await response.json();
 
+      if (responseJson.erreur) {
+        showOkMessageDialog(
+          responseJson.message,
+          "Erreur pendant la postulation"
+        );
+      } else {
+        showOkMessageDialog("Postulation envoyé", "confirmation");
+      }
+    } catch (err) {
+      let errorMessage = err.message;
 
-    async function buttonPostulerHandler() {
-        let response;
-
-        try {
-            //   await axios.patch(
-            //     config.backend + "/api/etudiants/postulation",
-            //     { etudiantId: auth.userId, stageId }
-            //   );
-
-            response = await fetch(config.backend + "/api/etudiants/postulation", {
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                method: "PATCH",
-                body: JSON.stringify({
-                    etudiantId: auth.userId,
-                    stageId
-                })
-            });
-
-            const responseJson = await response.json();
-
-            if (responseJson.erreur) {
-                showOkMessageDialog(responseJson.message, "Erreur pendant la postulation");
-            }
-            else {
-                showOkMessageDialog("Postulation envoyé", "confirmation");
-            }
-
-        } catch (err) {
-            let errorMessage = err.message;
-
-            try {
-                const responseJson = await response.json();
-                if (responseJson.erreur) {
-                    errorMessage += "\n" + responseJson.message;
-                }
-            }
-            catch (err2) {
-
-            }
-            showOkMessageDialog("Erreur pendant la postulation : " + err.message, "Erreur pendant la postulation");
+      try {
+        const responseJson = await response.json();
+        if (responseJson.erreur) {
+          errorMessage += "\n" + responseJson.message;
         }
-
+      } catch (err2) {}
+      showOkMessageDialog(
+        "Erreur pendant la postulation : " + err.message,
+        "Erreur pendant la postulation"
+      );
     }
+  }
 
-    return (
-        <>
-            <div className="flex justify-center mt-8 mb-8 text-justify">
-                <h2 className="text-2xl font-bold mb-5">
-                    Détail du stage
-                </h2>
-            </div>
-            <div className="justify-center mt-8 mb-8 text-center">
-                {
-                    stage
-                    ?
-                        (<>
-                            
-                            <h3>
-                                <span className="font-semibold">Nom entreprise: </span>
-                                {stage.nomEntreprise}
-                            </h3>
+  return (
+    <>
+      <div className="flex justify-center mt-8 mb-8 text-justify">
+        <h2 className="text-2xl font-bold mb-5">Détail du stage</h2>
+      </div>
+      <div className="justify-center mt-8 mb-8 text-center">
+        {stage ? (
+          <>
+            <h3>
+              <span className="font-semibold">Nom entreprise: </span>
+              {stage.nomEntreprise}
+            </h3>
 
-                            <h3>
-                                <span className="font-semibold">Nom du contacte: </span>
-                                {stage.nomContact}
-                            </h3>
-                            <h3>
-                                <span className="font-semibold">Courriel du contacte: </span>
-                                {stage.courrielContact}
-                            </h3>
-                            <h3>
-                                <span className="font-semibold">Numéro du contacte: </span>
-                                {stage.numeroContact}
-                            </h3>
-                            <h3>
-                                <span className="font-semibold">Adresse de l'entreprise: </span>
-                                {stage.adresseEntreprise}
-                            </h3>
-                            <h3>
-                                <span className="font-semibold">Nombre de postes: </span>
-                                {stage.nbPoste}
-                            </h3>
-                            <h3>
-                                <span className="font-semibold">Description: </span>
-                                {stage.description}
-                            </h3>
-                            <h3>
-                                <span className="font-semibold">Rémunération: </span>
-                                {stage.remuneration}
-                            </h3>
-
-                        </>)
-                    :
-                        (<>
-                            Chargement en cours...
-                        </>)
-                }
+            <h3>
+              <span className="font-semibold">Nom du contacte: </span>
+              {stage.nomContact}
+            </h3>
+            <h3>
+              <span className="font-semibold">Courriel du contacte: </span>
+              {stage.courrielContact}
+            </h3>
+            <h3>
+              <span className="font-semibold">Numéro du contacte: </span>
+              {stage.numeroContact}
+            </h3>
+            <h3>
+              <span className="font-semibold">Adresse de l'entreprise: </span>
+              {stage.adresseEntreprise}
+            </h3>
+            <h3>
+              <span className="font-semibold">Nombre de postes: </span>
+              {stage.nbPoste}
+            </h3>
+            <h3>
+              <span className="font-semibold">Description: </span>
+              {stage.description}
+            </h3>
+            <h3>
+              <span className="font-semibold">Rémunération: </span>
+              {stage.remuneration}
+            </h3>
+            {auth.isEmployeur ? (
+              <React.Fragment>
+                <EtudiantsCandidats stage={stage} />
                 <Button
-                    onClick={buttonPostulerHandler}
-                >Postuler</Button>
+                  onClick={() => {
+                    setDialogTitle("Modifier ou supprimer le stage");
+                    setOpen(true);
+                  }}
+                >
+                  Modifier
+                </Button>
+              </React.Fragment>
+            ) : (
+              <Button onClick={buttonPostulerHandler}>Postuler</Button>
+            )}
+            <Dialog open={okDialogOpen} onClose={null}>
+              <DialogTitle>{dialogTitle}</DialogTitle>
 
-                <Dialog open={okDialogOpen} onClose={null}>
-                    <DialogTitle>{dialogTitle}</DialogTitle>
+              <DialogContent>
+                <DialogContentText>{dialogMessage}</DialogContentText>
+              </DialogContent>
 
-                    <DialogContent>
-                        <DialogContentText>
-                            {dialogMessage}
-                        </DialogContentText>
-                    </DialogContent>
+              <DialogActions>
+                <Button
+                  onClick={() => {
+                    setOkDialogOpen(false);
+                  }}
+                >
+                  Ok
+                </Button>
+              </DialogActions>
+            </Dialog>
+            <Dialog open={open} onClose={() => setOpen(false)}>
+              <DialogTitle>{dialogTitle}</DialogTitle>
 
-                    <DialogActions>
-                        <Button
-                            onClick={() => { setOkDialogOpen(false); }}
-                        >
-                            Ok
-                        </Button>
-                    </DialogActions>
-                </Dialog>
-            </div>
-        </>
-    );
-};
+              <DialogContent
+                sx={{
+                  width: 500,
+                  maxWidth: "100%",
+                }}
+              >
+                <TextField
+                  autoFocus
+                  id="nomContact"
+                  type="text"
+                  margin="dense"
+                  label="Nom de contact"
+                  fullWidth
+                  defaultValue={stage.nomContact}
+                />
+                <br />
+                <TextField
+                  autoFocus
+                  id="courrielContact"
+                  type="text"
+                  margin="dense"
+                  label="Courriel de Contact"
+                  inputProps={{ inputMode: "email", pattern: "[0-9]*" }}
+                  fullWidth
+                  defaultValue={stage.courrielContact}
+                />
+                <br />
+                <TextField
+                  autoFocus
+                  id="numeroContact"
+                  type="text"
+                  margin="dense"
+                  label="Numero de contact"
+                  fullWidth
+                  defaultValue={stage.numeroContact}
+                />
+                <br />
+                <TextField
+                  autoFocus
+                  id="nomEntreprise"
+                  type="text"
+                  margin="dense"
+                  label="Nom de l'entreprise"
+                  fullWidth
+                  defaultValue={stage.nomEntreprise}
+                />
+                <br />
+                <TextField
+                  autoFocus
+                  id="adresseEntreprise"
+                  type="text"
+                  margin="dense"
+                  label="Adresse de l'entreprise"
+                  fullWidth
+                  defaultValue={stage.adresseEntreprise}
+                />
+                <br />
+                <TextField
+                  autoFocus
+                  id="description"
+                  type="text"
+                  margin="dense"
+                  label="description"
+                  multiline
+                  maxRows={3}
+                  fullWidth
+                  defaultValue={stage.description}
+                />
+                <br />
+                <TextField
+                  autoFocus
+                  id="remuneration"
+                  type="text"
+                  margin="dense"
+                  label="Remuneration"
+                  fullWidth
+                  defaultValue={stage.remuneration}
+                />
+                <br />
+                <TextField
+                  id="nbPoste"
+                  type="text"
+                  margin="dense"
+                  label="Nombre de postes"
+                  fullWidth
+                  defaultValue={stage.nbPoste}
+                />
+              </DialogContent>
 
+              <DialogActions>
+                <Button
+                  onClick={async () => {
+                    setOpen(false);
 
+                    try {
+                      await axios.delete(
+                        config.backend + "/api/stages/" + stage._id,
+                        { etudiantId: auth.userId, stageId: stage._id }
+                      );
 
-
-
+                      auth.modification(new Date().toLocaleString());
+                    } catch (err) {}
+                  }}
+                >
+                  Supprimer
+                </Button>
+                <Button onClick={modifierStageHandler}>Modifier</Button>
+              </DialogActions>
+            </Dialog>
+          </>
+        ) : (
+          <>Chargement en cours...</>
+        )}
+      </div>
+    </>
+  );
+}
