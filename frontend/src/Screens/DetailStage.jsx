@@ -17,9 +17,11 @@ import TextField from "@mui/material/TextField";
 
 import EtudiantsCandidats from "../Components/etudiants/EtudiantsCandidats";
 
+import { useNavigate } from "react-router-dom";
+
 export default function DetailStage() {
   const [stage, setStage] = useState(null);
-
+  const navigate = useNavigate();
   const auth = useContext(AuthContext);
   const { stageId } = useParams();
 
@@ -52,7 +54,7 @@ export default function DetailStage() {
     try {
       if (stage.courrielContact.match(/.+@.+\..+/g)) {
         console.log("email is correcte");
-
+        console.log(stage);
         await axios.patch(config.backend + "/api/stages/" + stage._id, stage);
 
         auth.modification(new Date().toLocaleString());
@@ -66,7 +68,25 @@ export default function DetailStage() {
     }
   };
 
-  const supprimerStageHandler = () => {};
+  const genericModiferStageHandler = (event) => {
+    setStage({ ...stage, [event.target.id]: event.target.value });
+    //console.log(event.target.id);
+  };
+
+  const supprimerStageHandler = async () => {
+    setOpen(false);
+
+    try {
+      await axios.delete(config.backend + "/api/stages/" + stage._id);
+
+      auth.modification(new Date().toLocaleString());
+      navigate("/gererOffres");
+      
+    } catch (err) {
+      console.log(err)
+    }
+
+  };
 
   async function buttonPostulerHandler() {
     let response;
@@ -204,6 +224,7 @@ export default function DetailStage() {
                   label="Nom de contact"
                   fullWidth
                   defaultValue={stage.nomContact}
+                  onChange={genericModiferStageHandler}
                 />
                 <br />
                 <TextField
@@ -215,6 +236,7 @@ export default function DetailStage() {
                   inputProps={{ inputMode: "email", pattern: "[0-9]*" }}
                   fullWidth
                   defaultValue={stage.courrielContact}
+                  onChange={genericModiferStageHandler}
                 />
                 <br />
                 <TextField
@@ -225,6 +247,7 @@ export default function DetailStage() {
                   label="Numero de contact"
                   fullWidth
                   defaultValue={stage.numeroContact}
+                  onChange={genericModiferStageHandler}
                 />
                 <br />
                 <TextField
@@ -235,6 +258,7 @@ export default function DetailStage() {
                   label="Nom de l'entreprise"
                   fullWidth
                   defaultValue={stage.nomEntreprise}
+                  onChange={genericModiferStageHandler}
                 />
                 <br />
                 <TextField
@@ -245,6 +269,7 @@ export default function DetailStage() {
                   label="Adresse de l'entreprise"
                   fullWidth
                   defaultValue={stage.adresseEntreprise}
+                  onChange={genericModiferStageHandler}
                 />
                 <br />
                 <TextField
@@ -257,6 +282,7 @@ export default function DetailStage() {
                   maxRows={3}
                   fullWidth
                   defaultValue={stage.description}
+                  onChange={genericModiferStageHandler}
                 />
                 <br />
                 <TextField
@@ -267,6 +293,7 @@ export default function DetailStage() {
                   label="Remuneration"
                   fullWidth
                   defaultValue={stage.remuneration}
+                  onChange={genericModiferStageHandler}
                 />
                 <br />
                 <TextField
@@ -276,26 +303,12 @@ export default function DetailStage() {
                   label="Nombre de postes"
                   fullWidth
                   defaultValue={stage.nbPoste}
+                  onChange={genericModiferStageHandler}
                 />
               </DialogContent>
 
               <DialogActions>
-                <Button
-                  onClick={async () => {
-                    setOpen(false);
-
-                    try {
-                      await axios.delete(
-                        config.backend + "/api/stages/" + stage._id,
-                        { etudiantId: auth.userId, stageId: stage._id }
-                      );
-
-                      auth.modification(new Date().toLocaleString());
-                    } catch (err) {}
-                  }}
-                >
-                  Supprimer
-                </Button>
+                <Button onClick={supprimerStageHandler}>Supprimer</Button>
                 <Button onClick={modifierStageHandler}>Modifier</Button>
               </DialogActions>
             </Dialog>

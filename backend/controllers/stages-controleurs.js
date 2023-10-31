@@ -36,7 +36,11 @@ const creation = async (requete, reponse, next) => {
     unEmployeur = await Employeur.findById(employeur).populate("stages");
   } catch (err) {
     return next(
-      new HttpErreur("Erreur lors de la récupération de l'employeur", 500, err.message)
+      new HttpErreur(
+        "Erreur lors de la récupération de l'employeur",
+        500,
+        err.message
+      )
     );
   }
   try {
@@ -44,7 +48,9 @@ const creation = async (requete, reponse, next) => {
     unEmployeur.stages.push(nouveauStage);
     await unEmployeur.save();
   } catch (err) {
-    return next(new HttpErreur("Erreur lors de l'ajout du stage", 422, err.message));
+    return next(
+      new HttpErreur("Erreur lors de l'ajout du stage", 422, err.message)
+    );
   }
 
   reponse.status(201).json({ stage: nouveauStage.toObject({ getter: true }) });
@@ -56,7 +62,13 @@ const getStageById = async (requete, reponse, next) => {
   try {
     stage = await Stage.findById(stageId);
   } catch (err) {
-    return next(new HttpErreur("Erreur lors de la récupération du stage", 500, err.message));
+    return next(
+      new HttpErreur(
+        "Erreur lors de la récupération du stage",
+        500,
+        err.message
+      )
+    );
   }
   if (!stage) {
     return next(new HttpErreur("Aucun stage trouvé pour l'id fourni", 404));
@@ -71,7 +83,11 @@ const getStages = async (requete, reponse, next) => {
     stages = await Stage.find();
   } catch (err) {
     return next(
-      new HttpErreur("Erreur lors de la récupération des stages", 500, err.message)
+      new HttpErreur(
+        "Erreur lors de la récupération des stages",
+        500,
+        err.message
+      )
     );
   }
 
@@ -88,30 +104,51 @@ const supprimerStage = async (requete, reponse, next) => {
   let employeur;
   let etudiants;
   try {
-    stage = await Stage.findById(stageId).populate("etudiants employeur");
+    stage = await Stage.findById(stageId)
+      .populate({
+        path: "etudiants",
+        model: "Etudiant",
+      })
+      .populate({
+        path: "etudiants.stagesPostule.stagePostule",
+        model: "Etudiant",
+      })
+      .populate("employeur");
   } catch (err) {
-    return next(new HttpErreur("Erreur lors de la suppression du stage", 500, err.message));
+    return next(
+      new HttpErreur("Erreur lors de la suppression du stage", 500, err.message)
+    );
   }
   if (!stage) {
     return next(new HttpErreur("Impossible de trouver le stage", 404));
   }
   employeur = stage.employeur;
   etudiants = stage.etudiants;
-
   try {
     await stage.remove();
 
-    for (i = 0; i < etudiants.length; i++) {
-      etudiants[i].stagesPostule.pull(stage);
+    for (let i = 0; i < etudiants.length; i++) {
+      const etudiant = etudiants[i];
+      const stagesPostule = etudiant.stagesPostule;
 
-      await etudiants[i].save();
+      const index = stagesPostule.findIndex((postule) =>
+        postule.stagePostule.equals(stage._id)
+      );
+
+      if (index !== -1) {
+        etudiant.stagesPostule.splice(index, 1);
+
+        await etudiant.save();
+      }
     }
 
     employeur.stages.pull(stage);
 
     await employeur.save();
   } catch (err) {
-    return next(new HttpErreur("Erreur lors de la suppression du stage", 500, err.message));
+    return next(
+      new HttpErreur("Erreur lors de la suppression du stage", 500, err.message)
+    );
   }
   reponse.status(200).json({ message: "Stage supprimé" });
 };
@@ -119,15 +156,18 @@ const supprimerStage = async (requete, reponse, next) => {
 const modifierStage = async (requete, reponse, next) => {
   const champsModifies = requete.body;
   const stageId = requete.params.stageId;
-  
-  let stage;
 
-  try {    
-    stage = await Stage.findByIdAndUpdate(stageId, champsModifies, { new: true });
+  let stage;
+  console.log(champsModifies);
+  try {
+    stage = await Stage.findByIdAndUpdate(stageId, champsModifies, {
+      new: true,
+    });
     await stage.save();
-    
   } catch (err) {
-    return next(new HttpErreur("Erreur lors de la mise à jour du stage", 500, err.message));
+    return next(
+      new HttpErreur("Erreur lors de la mise à jour du stage", 500, err.message)
+    );
   }
 
   reponse.status(200).json({ stage: stage.toObject({ getters: true }) });
