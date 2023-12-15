@@ -24,3 +24,6 @@ yarn-debug.log*
 yarn-error.log*
 
 data
+
+.vscode/
+run.ps1

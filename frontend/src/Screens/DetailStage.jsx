@@ -16,9 +16,8 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 
 import EtudiantsCandidats from "../Components/etudiants/EtudiantsCandidats";
-
+import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
 export default function DetailStage() {
   const [stage, setStage] = useState(null);
   const navigate = useNavigate();
@@ -188,7 +187,12 @@ export default function DetailStage() {
                 </Button>
               </React.Fragment>
             ) : (
-              <Button onClick={buttonPostulerHandler}>Postuler</Button>
+              <>
+                <Button onClick={buttonPostulerHandler}>Postuler</Button>
+                <NavLink to={"/VerifierAdress/"}>
+                  <Button>Verifier Distance</Button>
+                </NavLink>
+              </>
             )}
             <Dialog open={okDialogOpen} onClose={null}>
               <DialogTitle>{dialogTitle}</DialogTitle>

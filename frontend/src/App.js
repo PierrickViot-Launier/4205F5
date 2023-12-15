@@ -16,6 +16,7 @@ import OffresDeStage from "./Components/stages/OffresDeStage";
 import Etudiants from "./Components/etudiants/Etudiants";
 import ModifierProfilScreen from "./Screens/ModifierProfilScreen";
 import DetailStage from "./Screens/DetailStage";
+import VerifierAdress from "./Components/OpenMap/VerifierAdress";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -121,6 +122,11 @@ function App() {
               <Route
                 path="/modifierProfil"
                 element={<ModifierProfilScreen />}
+              />
+
+              <Route
+                path="/VerifierAdress"
+                element={<VerifierAdress/>}
               />
             </Routes>
           </main>

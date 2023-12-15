@@ -1,12 +1,15 @@
 import React from "react";
 import { MapContainer, TileLayer } from "react-leaflet";
+import "./VerifierAdress.css"
+import 'leaflet/dist/leaflet.css'
 
-export default function OpenMap() {
+
+export default function VerifierAdress() {
     const position = [8.1386, 5.1026]; // [latitude, longitude]
     const zoomLevel = 13;
 
     return (
-        <MapContainer
+        <MapContainer className="full-height-map"
             center={position}
             zoom={zoomLevel}
             scrollWheelZoom={false}

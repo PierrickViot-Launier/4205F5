@@ -1,5 +1,4 @@
 import React from "react";
-import OpenMap from "../Components/OpenMap/OpenMap";
 
 export default function AccueilScreen() {
   const annee = new Date().getFullYear();
@@ -39,9 +38,6 @@ export default function AccueilScreen() {
           et sécurité informatique Développement d'applications informatiques
         </p>
       </div>
-
-      <OpenMap />
-
     </div>
   );
 }
