@@ -1,0 +1,240 @@
+//const { v4: uuidv4 } = require("uuid");
+const HttpErreur = require("../models/http-erreur");
+
+const Etudiant = require("../models/etudiant");
+const Stage = require("../models/stage");
+
+const inscription = async (requete, reponse, next) => {
+  const { DA, nom, courriel, motDePasse, telephone, adresse } = requete.body;
+
+  let etudiantExiste;
+
+  try {
+    etudiantExiste = await Etudiant.findOne({ DA: DA });
+  } catch (err) {
+    return next(new HttpErreur("Échec vérification étudiant existe", 500, err.message));
+  }
+
+  if (etudiantExiste) {
+    return next(
+      new HttpErreur("Étudiant existe déjà, veuillez vous connecter", 422)
+    );
+  }
+
+  let nouvelEtudiant = new Etudiant({
+    DA,
+    nom,
+    courriel,
+    motDePasse,
+    telephone,
+    adresse,
+    stagesPostule: [],
+    stage: null,
+  });
+
+  try {
+    await nouvelEtudiant.save();
+  } catch (err) {
+    return next(new HttpErreur("Erreur lors de l'ajout de l'étudiant", 422, err.message));
+  }
+
+  reponse
+    .status(201)
+    .json({ etudiant: nouvelEtudiant.toObject({ getter: true }) });
+};
+
+const modificationProfil = async (requete, reponse, next) => {
+  const etudiantId = requete.params.etudiantId;
+  const etudiantPassword = requete.params.etudiantPassword;
+  const { DA, nom, courriel, motDePasse, telephone, adresse } = requete.body;
+
+  let etudiant = null;
+
+  try {
+    etudiant = await Etudiant.findById(etudiantId);
+  }
+  catch (err) {
+    return next(new HttpErreur("Erreur lors de la récupération de l'édutiant", 500, err.message));
+  }
+    //make sure que le password fourni dans les params (url) est correcte, sinon on refuse la modification
+  if (etudiant.motDePasse !== etudiantPassword) {
+    throw new HttpErreur("Peut pas modifier le profil de l'utilisateur parce que le mot de passe fourni est incorrecte", 401);
+  }
+
+  try {
+    etudiant.DA = DA;
+    etudiant.nom = nom;
+    etudiant.courriel = courriel;
+    etudiant.motDePasse = motDePasse;
+    etudiant.telephone = telephone;
+    etudiant.adresse = adresse;
+    await etudiant.save();
+  }
+  catch (err) {
+    throw new HttpErreur("Erreur pendant la sauvegarde des modifications de l'étudiant", 500, err.message);
+  }
+  
+  reponse
+  .status(200)
+  .json({
+
+  });
+};
+
+const getEtudiants = async (requete, reponse, next) => {
+  let etudiants;
+  try {
+    etudiants = await Etudiant.find().populate("stagesPostule.stagePostule stage");
+  } catch (err) {
+    return next(
+      new HttpErreur("Erreur lors de la récupération des étudiants", 500, err.message)
+    );
+  }
+  if (!etudiants) {
+    return next(new HttpErreur("Aucun étudiant trouvé", 404));
+  }
+  reponse.status(201).json({ etudiants: etudiants });
+};
+
+const getEtudiantById = async (requete, reponse, next) => {
+  const etudiantId = requete.params.etudiantId;
+
+  let etudiant;
+
+  try {
+    etudiant = await Etudiant.findById(etudiantId);
+  } catch (err) {
+    return next(
+      new HttpErreur("Erreur lors de la récupération de l'étudiant", 500, err.message)
+    );
+  }
+
+  if (!etudiant) {
+    return next(new HttpErreur("Aucun étudiant trouvé pour l'id fourni", 404));
+  }
+  reponse.json({ etudiant: etudiant.toObject({ getters: true }) });
+};
+
+const postulationStage = async (requete, reponse, next) => {
+  // console.log(stageId);
+
+  const { etudiantId, stageId } = requete.body;
+  let dejaPostule = false;
+  let etudiant;
+
+  let stage;
+
+  try {
+    etudiant = await Etudiant.findById(etudiantId);
+  } catch (err) {
+    return next(
+      new HttpErreur("Erreur lors de la récupération de l'étudiant", 500, err.message)
+    );
+  }
+
+  try {
+    stage = await Stage.findById(stageId);
+  } catch (err) {
+    return next(new HttpErreur("Erreur lors de la récupération du stage", 500, err.message));
+  }
+
+  // console.log(etudiant);
+  for (i = 0; i < etudiant.stagesPostule.length; i++) {
+    if (etudiant.stagesPostule[i].stagePostule._id == stageId) {
+      dejaPostule = true;
+    }
+  }
+
+  if (dejaPostule) {
+    return next(new HttpErreur("L'étudiant a déjà postulé à ce stage", 404));
+  }
+
+  try {
+    // console.log(stage);
+    etudiant.stagesPostule.push({stagePostule: stage, date:  new Date().toLocaleDateString()});
+    await etudiant.save();
+
+    stage.etudiants.push(etudiant);
+
+    await stage.save();
+  } catch (err) {
+    return next(new HttpErreur("Erreur lors de l'inscription au stage", 500, err.message));
+  }
+
+  reponse.json({ message: "Étudiant inscrit avec succès" });
+};
+
+const getStagesByUserId = async (requete, reponse, next) => {
+  const etudiantId = requete.params.etudiantId;
+
+  let etudiant;
+  let stages;
+
+  try {
+    etudiant = await Etudiant.findById(etudiantId).populate("stagesPostule.stagePostule");
+
+    stages = etudiant.stagesPostule;
+  } catch (err) {
+    return next(
+      new HttpErreur("Erreur lors de la récupération des stages", 500, err.message)
+    );
+  }
+
+  // if (!stagesPostule) {
+  //   return next(
+  //     new HttpErreur("Aucun stage trouvé pour l'étudiant fourni", 404)
+  //   );
+  // }
+
+  console.log(stages)
+
+  reponse.json({ stages: stages });
+};
+
+const assignerStage = async (requete, reponse, next) => {
+  const etudiantId = requete.params.etudiantId;
+  const { stageId } = requete.body;
+  let etudiant;
+  let stage;
+  try {
+    stage = await Stage.findById(stageId).populate("etudiants");
+  } catch (err) {
+    return next(new HttpErreur("Erreur lors de la récupération du stage", 500, err.message));
+  }
+  try {
+    etudiant = await Etudiant.findById(etudiantId).populate("stage");
+  } catch (err) {
+    return next(
+      new HttpErreur("Erreur lors de la récupération de l'étudiant", 500, err.message)
+    );
+  }
+
+  if (!stage || stage.etudiants.length == stage.nbPoste) {
+    return next(
+      new HttpErreur("Impossible d'assigner ce stage à l'étudiant", 404)
+    );
+  }
+
+  if (!etudiant) {
+    return next(new HttpErreur("Aucun étudiant trouvé pour l'id fourni", 404));
+  }
+  try {
+    stage.etudiants.push(etudiant);
+    await stage.save();
+    etudiant.stage = stage;
+    await etudiant.save();
+  } catch (err) {
+    return next(new HttpErreur("Erreur lors de l'assignation au stage", 500, err.message));
+  }
+  reponse.json({ etudiant: etudiant.toObject({ getter: true }) });
+};
+
+module.exports = {
+  assignerStage,
+  getStagesByUserId,
+  getEtudiantById,
+  getEtudiants,
+  inscription,
+  modificationProfil,
+  postulationStage,
+};
