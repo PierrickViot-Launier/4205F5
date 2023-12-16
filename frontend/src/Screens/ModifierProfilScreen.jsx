@@ -14,6 +14,7 @@ import { config } from "../config";
 
 import PdfUpload from "../Components/Form/PdfUpload";
 import FileUploader from "../Components/Form/FileUploader";
+import UploadedFilePreview from "../Components/Form/UploadedFilePreview";
 
 export default function ModifierProfilScreen() {
   const [selectedFile, setSelectedFile] = useState("");
@@ -138,9 +139,20 @@ export default function ModifierProfilScreen() {
                     {donnees.attachements
                     && (
                       <div>
-                        {donnees.attachements.map((url) => (
+                        {donnees.attachements.map((url, index) => (
                           <>
-                            <a href="asdf" style={{display: "block"}}>{url}</a>
+                            <UploadedFilePreview
+                              onRemoveClicked={() => {
+                                const dup = {...donnees};
+                                const attachements = [...donnees.attachements];
+                                attachements.splice(index, 1);
+                                dup.attachements = attachements;
+                                setDonnees(dup);
+
+                              }}
+                              url={url}
+                            />
+                            {/* <a href="asdf" style={{display: "block"}}>{url}</a> */}
                           </>
                         ))}
                       </div>

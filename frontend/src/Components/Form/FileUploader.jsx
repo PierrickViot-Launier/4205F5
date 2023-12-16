@@ -17,6 +17,7 @@ const FileUploader = ({ onFileUploaded }) => {
 
 
   function uploadButtonClickHandler(e) {
+    e.preventDefault();
     if (file && !uploading) {
       setUploading(true);
       // https://stackoverflow.com/questions/5587973/javascript-upload-file
