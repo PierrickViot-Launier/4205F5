@@ -16,6 +16,10 @@ const etudiantSchema = new Schema({
     },
   ],
   stage: { type: mongoose.Types.ObjectId, ref: "Stage" },
+  attachements: {
+    type: [String],
+    required: false
+  }
 });
 
 module.exports = mongoose.model("Etudiant", etudiantSchema);
