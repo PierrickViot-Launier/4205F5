@@ -13,10 +13,11 @@ import { useForm } from "../shared/hooks/form-hook";
 import { config } from "../config";
 
 import PdfUpload from "../Components/Form/PdfUpload";
+import FileUploader from "../Components/Form/FileUploader";
 
 export default function ModifierProfilScreen() {
   const [selectedFile, setSelectedFile] = useState("");
-  const [attachement, setAttachement] = useState(null);
+  const [attachements, setAttachements] = useState([]);
 
   const { error, sendRequest } = useHttpClient();
 
@@ -26,7 +27,7 @@ export default function ModifierProfilScreen() {
   const [donnees, setDonnees] = useState(null);
 
   // console.log(auth);
-  // console.log(donnees);
+  console.log(donnees);
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -65,9 +66,10 @@ export default function ModifierProfilScreen() {
       data.DA = formState.inputs.DA.value;
       data.adresse = formState.inputs.adresse.value;
       data.telephone = formState.inputs.telephone.value;
-      if (attachement !== "") {
-        data.attachement = attachement;
-      }
+      // if (attachement !== "") {
+      //   data.attachement = attachement;
+      // }
+      data.attachements = donnees.attachements;
     } else if (auth.isEmployeur) {
       data.adresse = formState.inputs.adresse.value;
       data.telephone = formState.inputs.telephone.value;
@@ -133,11 +135,35 @@ export default function ModifierProfilScreen() {
                       initialValid={true}
                       onInput={inputHandler}
                     />
-                    <PdfUpload
-                      selectedFile={selectedFile}
-                      setSelectedFile={setSelectedFile}
-                      setAttachement={setAttachement}
-                    />
+                    {donnees.attachements
+                    && (
+                      <div>
+                        {donnees.attachements.map((url) => (
+                          <>
+                            <a href="asdf" style={{display: "block"}}>{url}</a>
+                          </>
+                        ))}
+                      </div>
+                    )}
+                    {donnees.attachements?.length < 3
+                    && (
+                      // <PdfUpload
+                      //   selectedFile={selectedFile}
+                      //   setSelectedFile={setSelectedFile}
+                      //   setAttachements={setAttachements}
+                      // />
+                      // <div>
+                      //   pdf uploader
+                      // </div>
+                      <FileUploader
+                        onFileUploaded={(url) => {
+                          const dup = {...donnees};
+                          dup.attachements = [...donnees.attachements, url];
+                          setDonnees(dup);
+
+                        }}
+                      />
+                    )}
                   </>,
                 ],
                 (auth.isEtudiant || auth.isEmployeur) && [

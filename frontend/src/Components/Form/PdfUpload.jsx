@@ -3,7 +3,14 @@ import { config } from "../../config";
 import React from "react";
 import FileUploader from "./FileUploader";
 
-const PdfUpload = (props) => {
+
+/**
+ * 
+ * @deprecated
+ * @param {*} param0 
+ * @returns 
+ */
+const PdfUpload = ({selectedFile, setSelectedFile, setAttachements}) => {
 
 
   
@@ -12,11 +19,11 @@ const PdfUpload = (props) => {
     e.preventDefault();
     try {
       await axios.post(
-        config.backend + "/api/uploads",  props.selectedFile
+        config.backend + "/api/uploads",  selectedFile
       ).then(response => {
         
         
-        props.setAttachement(response.headers.location);
+        setAttachements(response.headers.location);
       
     
       })
@@ -34,7 +41,7 @@ const PdfUpload = (props) => {
 
         <FileUploader
 
-          setSelectedFile={props.setSelectedFile}
+          setSelectedFile={setSelectedFile}
 
         />
 

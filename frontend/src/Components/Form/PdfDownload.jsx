@@ -3,6 +3,14 @@ import axios from "axios";
 import { config } from "../../config";
 import { useContext } from "react";
 import { AuthContext } from "../../shared/context/auth-context";
+
+
+/**
+ * 
+ * @deprecated 
+ * @param {*} props 
+ * @returns 
+ */
 const PdfDownload = (props) => {
 
     const auth = useContext(AuthContext);
