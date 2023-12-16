@@ -29,7 +29,7 @@ export default function UploadedFilePreview({ url, onRemoveClicked }) {
                 )
             }
             <div style={{display: "inline"}}>
-                <a href={config.backend + url} >{url}</a>
+                <a rel="noreferrer" target="_blank" href={config.backend + url} >{url}</a>
             </div>
         </div>
     );

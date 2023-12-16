@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { config } from "../../config";
 
 // const FileUploader = ({setSelectedFile, attachement,    onFileUpload}) => {
-const FileUploader = ({ onFileUploaded }) => {
+const FileUploader = ({ onFileUploaded, onError }) => {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false); //true si l'upload est en cours mais qu'il n'est pas terminé
 
@@ -39,6 +39,9 @@ const FileUploader = ({ onFileUploaded }) => {
       }
       catch (ex) {
         setUploading(false);
+        if (onError) {
+          onError(ex);
+        }
       }
     }
   }

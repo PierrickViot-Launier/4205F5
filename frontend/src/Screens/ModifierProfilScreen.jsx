@@ -174,7 +174,15 @@ export default function ModifierProfilScreen() {
                           setDonnees(dup);
 
                         }}
+                        onError={(ex) => {
+                          console.log(ex);
+                        }}
                       />
+                    )
+                    || (
+                      <div>
+                        Vous avez atteint la limite de 3 pièces jointes.
+                      </div>
                     )}
                   </>,
                 ],
