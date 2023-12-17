@@ -156,6 +156,7 @@ const setProfileByUserID = async (requete, reponse, next) => {
     try {
       const etudiant = await Etudiant.findById(userID);
       setExistingProperties(etudiant);
+      console.log(etudiant);
       await etudiant.save();
     }
     catch (err) {

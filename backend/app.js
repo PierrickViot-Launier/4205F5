@@ -12,6 +12,7 @@ const etudiantsRoutes = require("./routes/etudiants-routes");
 const stagesRoutes = require("./routes/stages-route");
 const employeursRoutes = require("./routes/employeurs-routes");
 const coordonnateursRoutes = require("./routes/coordonnateurs-route");
+const uploadRoutes = require("./routes/upload-routes");
 const HttpErreur = require("./models/http-erreur");
 
 const app = express();
@@ -21,9 +22,12 @@ app.use(bodyParser.json());
 app.use((requete, reponse, next) => {
   reponse.setHeader("Access-Control-Allow-Origin", "*");
   reponse.setHeader("Access-Control-Allow-Headers", "*");
+  reponse.setHeader("Access-Control-Expose-Headers", "*");
   reponse.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
   next();
 });
+
+app.use("/uploads", express.static("uploads")); // https://expressjs.com/en/starter/static-files.html
 
 // app.use("/api/places", placesRoutes);
 app.use("/api/etudiants", etudiantsRoutes);
@@ -31,6 +35,7 @@ app.use("/api/stages", stagesRoutes);
 app.use("/api/employeurs", employeursRoutes);
 app.use("/api/utilisateurs", utilisateursRoutes);
 app.use("/api/cordonnateurs", coordonnateursRoutes);
+app.use("/api/uploads", uploadRoutes);
 app.use((requete, reponse, next) => {
   return next(new HttpErreur("Route non trouvée", 404));
 });
