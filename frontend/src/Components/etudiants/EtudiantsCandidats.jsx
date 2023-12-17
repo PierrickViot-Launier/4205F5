@@ -55,7 +55,7 @@ export default function EtudiantsCandidats({ stage }) {
                 //console.log(etudiant);
               }}
             >
-              <Card className="text-center max-w-xl rounded overflow-hidden shadow-lg flex flex-row bg-white hover:bg-gray">
+              <Card className="text-center max-w-4xl rounded overflow-hidden shadow-lg flex flex-row bg-white hover:bg-gray">
                 <h3>{etudiant.nom}</h3>
 
                 <h3>
