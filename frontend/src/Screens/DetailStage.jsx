@@ -18,6 +18,7 @@ import TextField from "@mui/material/TextField";
 import EtudiantsCandidats from "../Components/etudiants/EtudiantsCandidats";
 import { NavLink } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import Carte from "../Components/OpenMap/Carte";
 export default function DetailStage() {
   const [stage, setStage] = useState(null);
   const navigate = useNavigate();
@@ -174,6 +175,10 @@ export default function DetailStage() {
               <span className="font-semibold">Rémunération: </span>
               {stage.remuneration}
             </h3>
+
+            <Carte adresse={stage.adresseEntreprise} />
+
+
             {auth.isEmployeur ? (
               <React.Fragment>
                 <EtudiantsCandidats stage={stage} />
@@ -189,9 +194,6 @@ export default function DetailStage() {
             ) : (
               <>
                 <Button onClick={buttonPostulerHandler}>Postuler</Button>
-                <NavLink to={"/VerifierAdress/"}>
-                  <Button>Verifier Distance</Button>
-                </NavLink>
               </>
             )}
             <Dialog open={okDialogOpen} onClose={null}>
