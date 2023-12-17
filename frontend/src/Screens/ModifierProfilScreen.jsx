@@ -67,9 +67,7 @@ export default function ModifierProfilScreen() {
       data.DA = formState.inputs.DA.value;
       data.adresse = formState.inputs.adresse.value;
       data.telephone = formState.inputs.telephone.value;
-      // if (attachement !== "") {
-      //   data.attachement = attachement;
-      // }
+      
       data.attachements = donnees.attachements;
     } else if (auth.isEmployeur) {
       data.adresse = formState.inputs.adresse.value;

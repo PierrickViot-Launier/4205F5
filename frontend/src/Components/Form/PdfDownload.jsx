@@ -1,43 +1,22 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React from "react";
 import { config } from "../../config";
-import { useContext } from "react";
-import { AuthContext } from "../../shared/context/auth-context";
-
-
-/**
- * 
- * @deprecated 
- * @param {*} props 
- * @returns 
- */
-const PdfDownload = (props) => {
-
-    const auth = useContext(AuthContext);
-    const [etudiant, setEtudiant] = useState(null);
-      
-    const attachements = props.attachements;
- 
-
-    const telechargerFichiers = () => {
-        for(let i = 0; i<attachements.length; i++){
-          let link = document.createElement("a");
-          link.href = attachements[i];
-          link.download = attachements[i]; 
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
-       
-    };
+const PdfDownload = ({ attachements }) => {
+  const telechargerFichiers = () => {
+    for (let i = 0; i < attachements.length; i++) {
+      let link = document.createElement("a");
+      link.href = config.backend + attachements[i];
+      link.target="_blank";
+      link.rel="noreferrer"
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
 
   return (
-
-    <div>
-        <button className="button" onClick={telechargerFichiers}>Télécharger</button>
-    </div>
-
+    <button className="button" onClick={telechargerFichiers}>
+      Télécharger le(s) PDF
+    </button>
   );
-
 };
 export default PdfDownload;

@@ -53,6 +53,7 @@ const FileUploader = ({ onFileUploaded, onError }) => {
         type="file"
         id="file"
         name="file"
+        accept="application/pdf"
         onChange={handleFileInput}
       />
 
