@@ -1,13 +1,18 @@
 .carte-podium {
     background-color: blue;
-    border-radius: 10%;
-    height: 50vh;
-    width: 125vh;
-    left: 10vh;
+    border-radius: 2%;
+    height: 49vh;
+    width: 79vh;
+    /* left: 10vh; */
+    left:50%;
+    transform: translateX(-50%);
+    overflow: hidden;
+    position: relative;
 }
 
 .full-height-map {
     justify-content: center;
-    height: 48vh;
-    width: 100vh;
+    height: 45vh;
+    width: 75vh;
+    margin: 2vh;
 }

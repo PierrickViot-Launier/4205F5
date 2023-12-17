@@ -193,7 +193,7 @@ export default function DetailStage() {
               </React.Fragment>
             ) : (
               <>
-                <Button onClick={buttonPostulerHandler}>Postuler</Button>
+                <Button type="button" onClick={buttonPostulerHandler}>Postuler</Button>
               </>
             )}
             <Dialog open={okDialogOpen} onClose={null}>
